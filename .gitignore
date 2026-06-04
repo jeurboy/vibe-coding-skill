@@ -23,3 +23,8 @@ Icon
 
 # tool cache
 .aicb/
+
+# Local env secrets
+.env
+.env.local
+.env.*.local
