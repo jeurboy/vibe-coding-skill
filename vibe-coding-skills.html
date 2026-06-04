@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vibe coding @ CPMatch — workshop</title>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Google+Sans:400,500,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* ========== TOKENS ========== */
+:root{
+  --brand:#F5273E; --brand-soft:#fdeaec; --brand-ink:#c01528;
+  --amber:#E07B00; --amber-soft:#fdf3e3;
+  --green:#059669; --green-soft:#e7f6ef;
+  --ink:#1A1A1E; --muted:#5b5b66; --faint:#9a9aa6;
+  --line:#E6E6EC; --line-strong:#d6d6df;
+  --card:#F7F7F9; --code:#F2F2F6; --bg:#ffffff;
+  --maxw:920px;
+  --sans:'Google Sans','Noto Sans Thai','Sarabun',-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --shadow:0 1px 2px rgba(20,20,30,.04), 0 8px 28px rgba(20,20,30,.06);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; font-family:var(--sans); color:var(--ink); background:var(--bg);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+
+/* ========== TOOLBAR ========== */
+.toolbar{
+  position:sticky; top:0; z-index:50;
+  display:flex; align-items:center; gap:16px;
+  padding:12px 22px; background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(160%) blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.toolbar .brandmark{display:flex; align-items:center; gap:11px; font-weight:700; font-size:15px}
+.toolbar .sub{color:var(--faint); font-family:var(--mono); font-size:12px; letter-spacing:1px; padding-left:11px; border-left:1px solid var(--line)}
+/* CPMatch logo (inline SVG) */
+.logo{display:inline-flex; align-items:center; gap:9px; font-weight:700; letter-spacing:-.6px; color:var(--brand); white-space:nowrap}
+.logo svg{display:block; flex:none}
+.logo .wm{font-family:var(--sans); font-weight:700}
+.logo-lg{gap:13px}
+.logo-lg .wm{font-size:30px}
+.toolbar .spacer{flex:1}
+.seg{display:inline-flex; background:var(--card); border:1px solid var(--line); border-radius:11px; padding:3px; gap:2px}
+.seg button{
+  font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--muted);
+  border:0; background:transparent; padding:7px 14px; border-radius:8px; cursor:pointer;
+  display:inline-flex; align-items:center; gap:7px; transition:.15s;
+}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:#fff; color:var(--brand); box-shadow:var(--shadow)}
+
+/* ========== DECK / SLIDE (shared) ========== */
+.deck{max-width:var(--maxw); margin:0 auto; padding:8px 26px 120px}
+.slide{
+  container-type:inline-size;
+  position:relative;
+  scroll-margin-top:70px;
+}
+.eyebrow{
+  font-family:var(--mono); font-size:12.5px; font-weight:700; letter-spacing:2px;
+  color:var(--brand); text-transform:uppercase; display:block; margin-bottom:6px;
+}
+.slide h1{font-size:2.2em; line-height:1.12; letter-spacing:-.6px; margin:.1em 0 .25em}
+.slide h2{font-size:1.62em; line-height:1.2; letter-spacing:-.3px; margin:.05em 0 .5em}
+.slide h3{font-size:1.06em; font-weight:700; margin:0 0 .35em}
+.slide h4{font-size:.95em; font-weight:700; margin:0 0 .3em; color:var(--brand)}
+.slide p{margin:.45em 0; line-height:1.62}
+.slide .lede{color:var(--muted); font-size:1.02em; line-height:1.55; margin:.2em 0 1em}
+.slide em{color:var(--muted); font-style:italic}
+.slide strong{color:var(--brand); font-weight:700}
+.slide ul,.slide ol{margin:.4em 0; padding-left:1.25em}
+.slide li{margin:.45em 0; line-height:1.55}
+.slide li::marker{color:var(--brand)}
+.slide a{color:var(--brand); text-decoration:none; border-bottom:1px solid var(--brand-soft)}
+.slide a:hover{border-color:var(--brand)}
+
+code{font-family:var(--mono); font-size:.85em; color:var(--brand-ink); background:var(--code); padding:1.5px 6px; border-radius:5px}
+pre{
+  background:#1c1c22; border:1px solid #2a2a33; border-radius:12px;
+  padding:16px 18px; font-size:.82em; line-height:1.55; overflow:auto; margin:.5em 0;
+}
+pre code{color:#e6e6ec; background:none; padding:0; font-size:1em}
+pre .c{color:#8b8b97} pre .k{color:#ff8a9a}
+
+table{border-collapse:collapse; width:100%; font-size:.92em; margin:.4em 0; overflow:hidden; border-radius:10px; box-shadow:var(--shadow)}
+th{background:var(--brand); color:#fff; font-weight:600; text-align:left}
+td,th{border-bottom:1px solid var(--line); padding:10px 14px; vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even) td{background:var(--card)}
+.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+
+blockquote{
+  border-left:4px solid var(--amber); background:var(--amber-soft);
+  padding:12px 18px; margin:.7em 0; border-radius:0 10px 10px 0; line-height:1.55;
+}
+blockquote.brand{border-left-color:var(--brand); background:var(--brand-soft)}
+blockquote.green{border-left-color:var(--green); background:var(--green-soft)}
+
+.cols{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin:.4em 0}
+.card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 20px}
+.card.brand{border:1.5px solid var(--brand); background:#fff}
+.card.amber{border:1.5px solid var(--amber); background:#fff}
+.card.green{border:1.5px solid var(--green); background:#fff}
+.card>:first-child{margin-top:0}
+.card>:last-child{margin-bottom:0}
+.stack{display:flex; flex-direction:column; gap:14px}
+
+.bar{display:flex; border-radius:11px; overflow:hidden; font-weight:700; margin:.6em 0 .9em; box-shadow:var(--shadow)}
+.bar>div{padding:14px 18px; color:#fff; display:flex; align-items:center}
+.bar .f{background:var(--brand)} .bar .r{background:var(--amber)}
+
+.pill{display:inline-block; padding:2px 11px; border-radius:999px; font-weight:700; font-size:.78em; white-space:nowrap}
+.pill.done{background:var(--green-soft); color:var(--green)}
+.pill.wip{background:var(--amber-soft); color:var(--amber)}
+.pill.todo{background:var(--brand-soft); color:var(--brand-ink)}
+
+.amber{color:var(--amber); font-weight:700}
+.green{color:var(--green); font-weight:700}
+.red{color:var(--brand); font-weight:700}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono)}
+
+.flow{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:.4em 0; font-family:var(--mono); font-weight:700; font-size:.92em}
+.flow .step{background:var(--card); border:1px solid var(--line-strong); border-radius:8px; padding:7px 12px}
+.flow .step.hot{background:var(--brand); color:#fff; border-color:var(--brand)}
+.flow .arr{color:var(--faint)}
+
+.qr{display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px}
+.qr img{width:170px; height:auto; border:1px solid var(--line); border-radius:12px; padding:8px; background:#fff}
+
+/* pipeline infographic (horizontal stepper) */
+.pipeline{display:flex; align-items:flex-start; gap:2px; margin:.9em 0 .5em}
+.pipeline .pnode{flex:1 1 0; text-align:center; position:relative; min-width:0; padding:0 2px}
+.pipeline .pdot{width:54px; height:54px; border-radius:50%; margin:0 auto 9px; display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--brand-soft); border:2px solid var(--brand); position:relative; z-index:1}
+.pipeline .pnode.alt .pdot{background:var(--brand)}
+.pipeline .pname{font-weight:700; font-size:.9em; line-height:1.2}
+.pipeline .pdesc{font-size:.72em; color:var(--muted); margin-top:3px; line-height:1.3}
+.pipeline .pnode:not(:last-child)::before{content:''; position:absolute; top:27px; left:50%; width:100%; height:2px; background:var(--line-strong); z-index:0}
+
+/* layered-stack infographic */
+.layerstack{display:flex; flex-direction:column; gap:12px; margin:.6em 0}
+.layerstack .layer{display:flex; align-items:center; gap:16px; border:1.5px solid var(--brand); border-radius:12px; padding:13px 18px; background:#fff}
+.layerstack .lnum{font-family:var(--mono); font-weight:700; color:#fff; background:var(--brand); width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none; font-size:1.05em}
+.layerstack .ltext{flex:1; font-size:.9em; line-height:1.35}
+.layerstack .ltext b{display:block; color:var(--ink); margin-bottom:1px}
+.layerstack .ltext code{font-size:.85em}
+.layerstack .lfreq{font-size:.76em; font-weight:700; white-space:nowrap; padding:4px 11px; border-radius:999px; flex:none}
+.layerstack .lfreq.rare{background:var(--green-soft); color:var(--green)}
+.layerstack .lfreq.mid{background:var(--amber-soft); color:var(--amber)}
+.layerstack .lfreq.often{background:var(--brand-soft); color:var(--brand-ink)}
+
+/* agent chat transcript */
+.chat{display:flex; flex-direction:column; gap:9px; margin:.6em 0}
+.chat .msg{max-width:86%; padding:9px 14px; border-radius:13px; font-size:.86em; line-height:1.4; border:1px solid var(--line)}
+.chat .msg .who{font-weight:700; font-size:.78em; letter-spacing:.5px; display:block; margin-bottom:2px}
+.chat .msg.research{background:#eef3ff; border-color:#d4e0fb; align-self:flex-start}
+.chat .msg.research .who{color:#2563eb}
+.chat .msg.pm{background:var(--card); align-self:flex-start}
+.chat .msg.pm .who{color:var(--ink)}
+.chat .msg.risk{background:var(--brand-soft); border-color:#f6d3d8; align-self:flex-start}
+.chat .msg.risk .who{color:var(--brand-ink)}
+.chat .msg.po{background:var(--green-soft); border-color:#bce8d4; align-self:flex-end}
+.chat .msg.po .who{color:var(--green)}
+.chat .msg.prio{background:var(--amber-soft); border-color:#f5e0bd; align-self:flex-start}
+.chat .msg.prio .who{color:var(--amber)}
+
+/* lead slide background — generated via Replicate · openai/gpt-image-2 */
+.slide.lead{background:#fff url('bg_lead.png') no-repeat center right / cover}
+.slide.lead::before{content:''; position:absolute; inset:0; border-radius:inherit; z-index:0;
+  background:linear-gradient(100deg, rgba(255,255,255,.95) 0%, rgba(255,255,255,.72) 40%, rgba(255,255,255,0) 74%)}
+.slide.lead > *{position:relative; z-index:1}
+
+/* header section indicator */
+.sec-arrow{color:var(--brand); font-weight:700}
+#sectionLabel{transition:opacity .2s}
+
+/* content-slide AI texture — generated via Replicate · openai/gpt-image-2 */
+body.mode-present .slide:not(.lead):not(.divider)::before{
+  content:''; position:absolute; inset:0; border-radius:inherit; z-index:0; pointer-events:none;
+  background:#fff url('bg_content.png') no-repeat center / cover; opacity:.5;
+}
+body.mode-present .slide:not(.lead):not(.divider) > *{position:relative; z-index:1}
+body.mode-read::before{
+  content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:url('bg_content.png') no-repeat center / cover; opacity:.28;
+}
+
+/* section divider slides */
+.slide.divider{color:#fff}
+.slide.divider .secnum{font-family:var(--mono); font-weight:700; font-size:5.2em; line-height:.9; color:var(--brand); display:block; margin-bottom:6px}
+.slide.divider .eyebrow{color:#ff8a96}
+.slide.divider h2{color:#fff; font-size:2.5em; margin:.1em 0 .25em}
+.slide.divider p{color:#c4c4d0; font-size:1.05em; max-width:40ch}
+.slide.divider .logo{position:absolute; top:38px; right:0; color:#fff}
+.slide.divider{background:#0e0e14 url('bg_divider.png') no-repeat center right / cover}
+.slide.painpoint{background:#fbf5ee}
+body.mode-present .slide.painpoint{background:#fbf5ee}
+.slide.painpoint h2{font-size:2.9em; line-height:1.08; color:var(--ink)}
+.slide.painpoint .buzz{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+.slide.painpoint .buzz span{background:var(--brand-soft); border:1px solid #f6c9cf; color:var(--brand-ink); font-weight:700; font-size:.82em; padding:5px 12px; border-radius:999px}
+body.mode-read .slide.divider{border-radius:18px; padding:56px 48px; border-bottom:0; margin:8px 0}
+body.mode-read .slide.divider .logo{right:48px; top:46px}
+body.mode-present .slide.divider{justify-content:center; background:#0e0e14 url('bg_divider.png') no-repeat center right / cover}
+.slide.divider::after{color:#6a6a78 !important}
+
+/* ========== READING MODE ========== */
+body.mode-read{font-size:18.5px}
+body.mode-read .slide{padding:40px 0 38px; border-bottom:1px solid var(--line)}
+body.mode-read .slide:last-child{border-bottom:0}
+body.mode-read .slide.lead{
+  padding:64px 40px 52px; min-height:62vh; display:flex; flex-direction:column; justify-content:center;
+  border-bottom:2px solid var(--brand); border-radius:16px;
+  background:#fff url('bg_lead.png') no-repeat center right / cover;
+}
+body.mode-read .slide.lead h1{font-size:2.9em}
+body.mode-read .slide .gopres{
+  position:absolute; top:40px; right:0; opacity:0; transition:.15s;
+  font-family:var(--sans); font-size:12.5px; font-weight:600; color:var(--brand);
+  background:var(--brand-soft); border:0; border-radius:8px; padding:6px 11px; cursor:pointer;
+}
+body.mode-read .slide:hover .gopres{opacity:1}
+body.mode-read .present-only{display:none}
+
+/* ========== PRESENT MODE ========== */
+body.mode-present{background:#0e0e12; overflow:hidden; font-size:23px}
+body.mode-present .toolbar{background:rgba(14,14,18,.7); border-bottom-color:rgba(255,255,255,.08)}
+body.mode-present .toolbar .sub{color:#8a8a96; border-left-color:rgba(255,255,255,.14)}
+body.mode-present .toolbar .seg{background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.12)}
+body.mode-present .toolbar .seg button{color:#b8b8c2}
+body.mode-present .toolbar .seg button.on{background:#fff; color:var(--brand)}
+body.mode-present .toolbar{display:none}
+body.mode-present .deck{max-width:none; margin:0; padding:0}
+body.mode-present .slide{
+  display:none;
+  position:fixed; left:50%; top:50%;
+  width:1280px; height:720px; padding:56px 64px;
+  background:#fff; border-radius:14px; box-shadow:0 30px 90px rgba(0,0,0,.5);
+  flex-direction:column; justify-content:flex-start;
+  transform-origin:center center; overflow:hidden; border-bottom:0;
+}
+body.mode-present .slide .gopres{display:none}
+body.mode-present .slide.active{display:flex; animation:pop .28s ease}
+@keyframes pop{from{opacity:0} to{opacity:1}}
+body.mode-present .slide.lead{justify-content:center; background:#fff url('bg_lead.png') no-repeat center right / cover}
+body.mode-present .slide.lead h1{font-size:3.2em}
+body.mode-present .slide::after{
+  content:attr(data-n) " / " attr(data-total);
+  position:absolute; bottom:26px; right:34px; font-family:var(--mono);
+  font-size:13px; color:var(--faint);
+}
+body.mode-present .slide.lead::after{display:none}
+
+/* present controls */
+.present-only{display:none}
+.pbar{position:fixed; top:0; left:0; height:3px; background:var(--brand); width:0; z-index:60; transition:width .25s}
+.pnav{
+  position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:6px; z-index:60;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
+  border-radius:13px; padding:6px; backdrop-filter:blur(10px);
+}
+.pnav button{font-family:var(--sans); font-size:14px; font-weight:600; color:#d8d8e2; background:transparent; border:0; border-radius:9px; padding:8px 13px; cursor:pointer}
+.pnav button:hover{background:rgba(255,255,255,.12); color:#fff}
+.pnav .count{font-family:var(--mono); font-size:13px; color:#9a9aa6; padding:0 8px; min-width:64px; text-align:center}
+.pnav .pnav-sec{font-size:13px; font-weight:600; color:#d8d8e2; padding:0 10px; border-left:1px solid rgba(255,255,255,.14); border-right:1px solid rgba(255,255,255,.14); max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.navzone{position:fixed; top:0; height:100%; width:18%; z-index:40; cursor:pointer}
+.navzone.left{left:0} .navzone.right{right:0}
+.kbdhint{position:fixed; bottom:24px; right:24px; z-index:60; font-family:var(--mono); font-size:11.5px; color:#74747f}
+.kbdhint b{color:#b0b0bc; background:rgba(255,255,255,.08); padding:1px 6px; border-radius:5px; font-weight:500}
+
+/* ========== RESPONSIVE (reading) ========== */
+@container (max-width:680px){ .cols{grid-template-columns:1fr} }
+@media (max-width:560px){
+  .deck{padding:6px 16px 100px}
+  body.mode-read{font-size:17px}
+  .toolbar .sub{display:none}
+}
+</style>
+</head>
+<body class="mode-read">
+
+<div class="toolbar">
+  <div class="brandmark">
+    <span class="logo">
+      <svg width="25" height="21" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg>
+      <span class="wm">CPMatch</span>
+    </span>
+    <span class="sub"><span class="sec-arrow">▸</span> <span id="sectionLabel">vibe coding · workshop</span></span>
+  </div>
+  <div class="spacer"></div>
+  <div class="seg" role="tablist" aria-label="โหมดการดู">
+    <button id="btn-read" class="on" onclick="setMode('read')">อ่าน</button>
+    <button id="btn-present" onclick="setMode('present')">นำเสนอ</button>
+  </div>
+</div>
+
+<div class="pbar present-only" id="pbar"></div>
+<div class="navzone left present-only" onclick="go(-1)"></div>
+<div class="navzone right present-only" onclick="go(1)"></div>
+
+<main class="deck" id="deck">
+
+  <!-- 1 · LEAD -->
+  <section class="slide lead">
+    <span class="logo logo-lg" style="margin-bottom:22px">
+      <svg width="60" height="50" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg>
+      <span class="wm">CPMatch</span>
+    </span>
+    <span class="eyebrow">WORKSHOP</span>
+    <h1>ทักษะที่ทำให้ “เก่ง” ขึ้น</h1>
+    <h3 class="muted">สิ่งที่แยก <em>vibe coding เล่นสนุก</em> ออกจาก <strong>ใช้กับงานจริง</strong></h3>
+  </section>
+
+  <!-- PAINPOINT · หน้า 2 -->
+  <section class="slide painpoint">
+    <div class="cols" style="align-items:center; gap:30px">
+      <div>
+        <span class="eyebrow">// vibe coding ที่ทำผิด</span>
+        <h2>เร็ว… แต่พังเงียบ ๆ</h2>
+        <div class="buzz">
+          <span>หนี้โค้ด</span>
+          <span>บั๊กที่มองไม่เห็น</span>
+          <span>ช่องโหว่หลุด</span>
+          <span>merge มั่ว</span>
+          <span>ไม่มีใครเข้าใจโค้ด</span>
+        </div>
+      </div>
+      <div><img src="bg_painpoint.png" alt="vibe coding ที่ทำผิด" style="width:100%; border-radius:16px; box-shadow:var(--shadow)"></div>
+    </div>
+  </section>
+
+  <!-- 2 · AGENDA -->
+  <section class="slide">
+    <span class="eyebrow">// AGENDA</span>
+    <h2>วันนี้เราจะไปทางไหน</h2>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th style="width:42px">#</th><th>หัวข้อ</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>ภาพรวม + 4 ทักษะ vibe coding</td></tr>
+        <tr><td>2</td><td><strong>Context Engineering</strong> ← ใจกลาง</td></tr>
+        <tr><td>3</td><td>gstack 30 วินาที → ตัวอย่างจริง: ระบบฐานข้อมูลพนักงาน</td></tr>
+        <tr><td>4</td><td>Vibe QA: กำกับ AI เขียน test</td></tr>
+        <tr><td>5</td><td>Multi-agent: ใช้ AI เป็นทีม (PO)</td></tr>
+        <tr><td>6</td><td>สำหรับหัวหน้าทีม vibe coding</td></tr>
+        <tr><td>7</td><td>นำไปใช้ · เครื่องมือ · ปิดท้าย</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- DIVIDER · 01 ภาพรวม -->
+  <section class="slide divider">
+    <span class="logo"><svg width="26" height="22" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg><span class="wm">CPMatch</span></span>
+    <span class="secnum">01</span>
+    <span class="eyebrow">SECTION</span>
+    <h2>ภาพรวม + 4 ทักษะ</h2>
+    <p>vibe coding คืออะไร และทักษะอะไรบ้างที่เปลี่ยน “เล่นสนุก” ให้เป็น “งานจริง”</p>
+  </section>
+
+  <!-- 3 · OVERVIEW: vibe coding คืออะไร -->
+  <section class="slide">
+    <span class="eyebrow">// ภาพรวม · vibe coding</span>
+    <h2>vibe coding คืออะไร — แล้วทำไมต้องฝึก</h2>
+    <p class="lede"><em>บอก AI ว่า “อยากได้อะไร” แล้วมันเขียนโค้ดให้ — เราขับด้วย <strong>intent</strong> ไม่ใช่พิมพ์เองทุกบรรทัด</em></p>
+    <div class="cols">
+      <div class="card green">
+        <h4 style="color:var(--green)">เล่นสนุก = ทำได้ทันที</h4>
+        พิมพ์สั้น ๆ ก็ได้ของเลย เหมาะกับลองไอเดีย · prototype · งานเล็กที่พังก็ไม่เป็นไร
+      </div>
+      <div class="card amber">
+        <h4 style="color:var(--amber)">งานจริง = ไม่ง่ายแบบนั้น</h4>
+        codebase ใหญ่ + ทำกันเป็นทีม + ต้องขึ้น production → ปล่อยตามใจ AI = พังแบบเงียบ ๆ
+      </div>
+    </div>
+    <blockquote class="brand"><strong>AI เขียนเร็วขึ้นหลายเท่า</strong> — แต่ถ้าคุมไม่เป็น มันก็สร้างบั๊ก / หนี้โค้ด / ช่องโหว่ ได้เร็วขึ้นหลายเท่าเหมือนกัน</blockquote>
+    <p>4 ทักษะถัดไป คือสิ่งที่เปลี่ยน <em>“เล่นสนุก”</em> ให้กลายเป็น <strong>“ใช้กับงานจริงได้”</strong></p>
+  </section>
+
+  <!-- 4 · 4 SKILLS (problem → skill) -->
+  <section class="slide">
+    <span class="eyebrow">// ROADMAP · 4 ทักษะ + เซฟตี้</span>
+    <h2>4 ทักษะที่แยก “เล่นสนุก” ออกจาก “งานจริง”</h2>
+    <p class="lede"><em>แต่ละทักษะแก้ปัญหาหนึ่งที่ AI มักทำพังเวลาเจองานจริง</em></p>
+    <div class="cols">
+      <div class="card brand">
+        <h4>01 · Context engineering — ป้อนบริบทที่ถูก</h4>
+        <span class="muted">ปัญหา:</span> AI เห็นแค่ไฟล์ที่เปิด เลยเดาโครงสร้าง/กฎของทีมผิด<br>
+        <strong>ทักษะ:</strong> เขียน rule file (<code>CLAUDE.md</code>) commit เข้า repo ให้มันรู้จักโปรเจกต์
+      </div>
+      <div class="card brand">
+        <h4>02 · สั่งแบบ spec ไม่ใช่ vibe</h4>
+        <span class="muted">ปัญหา:</span> สั่งคลุมเครือ → AI เดา edge case / security เองมั่ว<br>
+        <strong>ทักษะ:</strong> ระบุ input·output·เงื่อนไขให้ครบ แล้วบอก “วางแผนก่อน อย่าเพิ่งเขียน”
+      </div>
+      <div class="card brand">
+        <h4>03 · วินัยการ review</h4>
+        <span class="muted">ปัญหา:</span> โค้ด AI ดูดีแต่ผิดได้ และที่ merge ไป <strong>คุณเป็นเจ้าของ</strong><br>
+        <strong>ทักษะ:</strong> อ่าน diff ทุกบรรทัด + รันจริงเช็ก เหมือน review PR ของคน
+      </div>
+      <div class="card brand">
+        <h4>04 · รู้จัก 70% problem</h4>
+        <span class="muted">ปัญหา:</span> AI พาไปได้ ~70% แต่ 30% สุดท้าย (edge case·perf·architecture) มันตัน<br>
+        <strong>ทักษะ:</strong> ปล่อยงานง่ายให้ AI · กำงานสำคัญไว้คุมเอง
+      </div>
+    </div>
+    <blockquote><strong>เซฟตี้ · Git hygiene</strong> — commit เล็ก commit บ่อย เวลา AI หลุดโลกจะย้อนกลับได้ในก้าวเดียว ไม่ใช่ทั้งวัน</blockquote>
+  </section>
+
+  <!-- DIVIDER · 02 Context Engineering -->
+  <section class="slide divider">
+    <span class="logo"><svg width="26" height="22" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg><span class="wm">CPMatch</span></span>
+    <span class="secnum">02</span>
+    <span class="eyebrow">SECTION · ใจกลาง workshop</span>
+    <h2>Context Engineering</h2>
+    <p>ป้อนบริบทที่ใช่ให้ AI รู้จักโปรเจกต์ของคุณ — ทักษะที่ใช้เวลามากที่สุดวันนี้</p>
+  </section>
+
+  <!-- 5 · CONTEXT = FUEL (merged: AI พลาดอะไร + ป้อน context ยังไง) -->
+  <section class="slide">
+    <span class="eyebrow">01 / CONTEXT ENGINEERING</span>
+    <h2>บริบทดี = ผลลัพธ์ดี</h2>
+    <p class="lede"><em>agent รู้แค่สิ่งที่อยู่ใน context — บริบทห่วย = ผลห่วย ไม่เกี่ยวว่าโมเดลเก่งแค่ไหน</em></p>
+    <div class="cols">
+      <div class="card amber">
+        <h4 style="color:var(--amber)">ถ้าไม่ให้บริบท → AI พลาด</h4>
+        <ul>
+          <li><strong>เดา convention ผิด</strong> — ตั้งชื่อ/วางไฟล์ไม่ตรงทีม</li>
+          <li><strong>สร้างไฟล์ผิด layer</strong> — วาง logic ผิดที่</li>
+          <li><strong>ละเมิดกฎที่มองไม่เห็น</strong> — commit เอง · แก้ migration เก่า</li>
+          <li><strong>reinvent</strong> — เขียน util / component ซ้ำของที่มี</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h4 style="color:var(--green)">ป้อนบริบทให้ดี → ทำไง</h4>
+        <ul>
+          <li><strong>rule file commit เข้า repo</strong> — <code>CLAUDE.md</code>/<code>AGENTS.md</code> ทั้งทีมได้บริบทเดียวกัน</li>
+          <li><strong>ชี้ไฟล์ให้ตรง</strong> — <code>@file</code> / ระบุ path อย่าให้เดา</li>
+          <li><strong>“ใช่” ไม่ใช่ “เยอะ”</strong> — ไฟล์ไม่เกี่ยวเจือจางโมเดล</li>
+          <li><strong>ให้ตรวจงานเองได้</strong> — บอกคำสั่ง test/lint · <code>/clear</code> เมื่อ session รก</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote><strong>ราก:</strong> model เก่ง generate แต่ไม่รู้จัก codebase คุณ — เห็นแค่ไฟล์ที่เปิดในรอบนั้น</blockquote>
+  </section>
+
+  <!-- 6 · PROMPT vs CONTEXT -->
+  <section class="slide">
+    <span class="eyebrow">// PART 2 · CONTEXT ENGINEERING</span>
+    <h2>Prompt engineering ต่างกับ Context engineering ยังไง</h2>
+    <p class="lede"><em>ทั้งคู่คือการ “บอกบริบท” ให้ AI — ต่างกันที่บอกครั้งเดียวจบ หรือบอกไว้ให้ใช้ซ้ำได้ตลอด</em></p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th style="width:24%"></th><th>Prompt engineering<br><span class="muted" style="font-weight:400">พิมพ์บอกในแชต</span></th><th>Context engineering<br><span class="muted" style="font-weight:400">เขียนเป็นไฟล์ในโปรเจกต์</span></th></tr></thead>
+      <tbody>
+        <tr><td><strong>เก็บไว้ที่ไหน</strong></td><td>พิมพ์สดในแชต ครั้งต่อครั้ง</td><td>ไฟล์ในโปรเจกต์ที่ commit ลง repo</td></tr>
+        <tr><td><strong>อยู่ได้นานแค่ไหน</strong></td><td>หายไปเมื่อปิดแชต</td><td>อยู่ถาวร ใช้ซ้ำได้ทุก session</td></tr>
+        <tr><td><strong>ใครได้ใช้</strong></td><td>เฉพาะคนที่พิมพ์ตอนนั้น</td><td>ทั้งทีม + AI ทุกตัว + คนที่มาทีหลัง</td></tr>
+        <tr><td><strong>พอโปรเจกต์โตขึ้น</strong></td><td>ต้องพิมพ์ย้ำเองซ้ำ ๆ</td><td>เขียนครั้งเดียว AI โหลดให้เอง</td></tr>
+      </tbody>
+    </table></div>
+    <blockquote>พูดง่าย ๆ: <strong>context file = เอกสาร onboarding ของ AI</strong> — ถ้าต้องอธิบายเรื่องเดิมซ้ำทุก session แปลว่ามันควรย้ายไปอยู่ในไฟล์</blockquote>
+  </section>
+
+  <!-- 7 · README != CONTEXT -->
+  <section class="slide">
+    <span class="eyebrow">// PART 2 · CONTEXT ENGINEERING</span>
+    <h2>README ≠ context file</h2>
+    <div class="cols">
+      <div class="card">
+        <h3>README.md</h3>
+        <p class="muted"><em>ผู้อ่าน: มนุษย์ · ตอบ “ติดตั้ง/รันยังไง”</em></p>
+        <ul><li>prerequisites · install</li><li>build / test</li><li>license · contributing</li><li>overview / marketing</li></ul>
+      </div>
+      <div class="card brand">
+        <h3>CONTEXT.md</h3>
+        <p class="muted"><em>ผู้อ่าน: AI agent · ตอบ “ทำงานในโค้ดนี้ยังไงให้ถูก”</em></p>
+        <ul><li>architecture &amp; layer rules</li><li>naming convention เป๊ะ ๆ</li><li>recipe เพิ่ม feature ใหม่</li><li>gotchas / สิ่งที่จะเดาผิด</li></ul>
+      </div>
+    </div>
+    <p><strong>README ของ CLI boilerplate = ไร้ค่าต่อ AI — ความรู้จริงอยู่ใน <code>CONTEXT.md</code></strong></p>
+  </section>
+
+  <!-- 8 · 3 LAYERS -->
+  <section class="slide">
+    <span class="eyebrow">// PART 2 · CONTEXT ENGINEERING</span>
+    <h2>3 layers — แยกตามความถี่ที่เปลี่ยน</h2>
+    <div class="cols" style="align-items:center; gap:28px">
+      <div><img src="bg_layers.png" alt="3 stacked layers" style="width:100%; border-radius:14px; box-shadow:var(--shadow)"></div>
+      <div class="layerstack">
+        <div class="layer">
+          <span class="lnum">3</span>
+          <span class="ltext"><b>FEATURE · <code>CONTEXT_&lt;feature&gt;.md</code></b>กำลังทำอะไร · เสร็จ/ค้างตรงไหน</span>
+          <span class="lfreq often">เปลี่ยนทุกวัน</span>
+        </div>
+        <div class="layer">
+          <span class="lnum">2</span>
+          <span class="ltext"><b>ARCHITECTURE · <code>CONTEXT.md</code></b>codebase ทำงานยังไง · recipe</span>
+          <span class="lfreq mid">เปลี่ยนตอน refactor</span>
+        </div>
+        <div class="layer">
+          <span class="lnum">1</span>
+          <span class="ltext"><b>ENTRY · <code>CLAUDE.md</code></b>“อ่านอะไรก่อน” + กฎเหล็ก</span>
+          <span class="lfreq rare">เปลี่ยนนาน ๆ ครั้ง</span>
+        </div>
+      </div>
+    </div>
+    <p class="muted"><em>บน (แดง) เปลี่ยนบ่อย → ล่าง (เทา) durable · แยกไฟล์ตามความถี่ → AI โหลดเฉพาะที่ใช้ ไม่ stale ทั้งก้อน</em></p>
+  </section>
+
+  <!-- 9 · LAYER 1 -->
+  <section class="slide">
+    <span class="eyebrow">// PART 2 · LAYER 1</span>
+    <h2>Layer 1 · ENTRY — เขียนครั้งเดียว ทุก AI อ่านเจอ</h2>
+    <p class="lede"><em>ไฟล์ entry บาง ๆ ที่ชี้ไป CONTEXT.md + กฎเหล็ก · เขียน source เดียว แล้ว mirror ลงทุกชื่อ</em></p>
+    <div class="cols">
+      <div>
+<pre><code><span class="c"># CLAUDE.md   &lt;!-- mirror → AGENTS.md · อย่าแก้มือ --&gt;</span>
+อ่านก่อน: @CONTEXT.md (สถาปัตยกรรม + recipe)
+
+<span class="c">## Hard rules</span>
+- ห้าม git commit เอง · ถามก่อนแก้ schema
+- ไม่ชัด → ถาม ห้ามเดา
+<span class="c">## Commands</span>
+pnpm dev · pnpm test · pnpm lint</code></pre>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tool</th><th>ไฟล์ที่อ่าน</th></tr></thead>
+        <tbody>
+          <tr><td>Claude Code</td><td><code>CLAUDE.md</code></td></tr>
+          <tr><td>Cursor</td><td><code>.cursorrules</code></td></tr>
+          <tr><td>Windsurf</td><td><code>.windsurfrules</code></td></tr>
+          <tr><td>Copilot</td><td><code>.github/copilot-instructions.md</code></td></tr>
+          <tr><td>Gemini</td><td><code>GEMINI.md</code></td></tr>
+          <tr><td>Codex / generic</td><td><code>AGENTS.md</code></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <p class="muted"><em>เขียน source เดียว → mirror ทุกชื่อ · ถ้าเขียนแค่ <code>CLAUDE.md</code> เพื่อนที่ใช้ Cursor จะไม่ได้ context</em></p>
+  </section>
+
+  <!-- 10 · LAYER 2 -->
+  <section class="slide">
+    <span class="eyebrow">// PART 2 · LAYER 2</span>
+    <h2>CONTEXT.md — template + recipe</h2>
+    <div class="cols">
+      <div>
+        <h4>Layer 2 = “codebase นี้ทำงานยังไง”</h4>
+        <p>รวมกฎสถาปัตยกรรม · naming · gotchas ของแต่ละ subsystem ไว้ที่เดียว</p>
+        <p>ของมีค่าสุดคือ <strong>recipe เพิ่ม feature</strong> — เขียนเป็น checklist ให้ AI ทำตามได้เป๊ะทุกครั้ง →</p>
+      </div>
+      <div>
+<pre><code><span class="c"># CONTEXT.md — Employee DB (ตัดมาส่วน recipe)</span>
+<span class="c">## กฎเวลาสร้าง feature ใหม่</span>
+<span class="k">1</span> แก้ prisma/schema.prisma + สร้าง migration ใหม่
+<span class="k">2</span> อัปเดต lib/schema/employee.ts (Zod)
+<span class="k">3</span> เพิ่ม app/api/employees/route.ts
+    validate ก่อนแตะ Prisma
+<span class="k">4</span> สร้าง /employees + /employees/new
+    ใช้ schema เดียวกับ API
+<span class="k">5</span> เพิ่ม API test + e2e ตาม AC
+<span class="k">6</span> ห้ามแก้ migration ที่ apply แล้ว</code></pre>
+      </div>
+    </div>
+    <p><strong>ทำซ้ำทุก subsystem → AI เรียนครั้งเดียว apply ได้ทุกที่ · เป้าหมาย: ผ่าน review รอบแรก</strong></p>
+  </section>
+
+  <!-- 11 · LAYER 3 TRAFFIC LIGHT -->
+  <section class="slide">
+    <span class="eyebrow">// PART 2 · LAYER 3</span>
+    <h2>Traffic-light = handoff ที่อ่านออกทันที</h2>
+<pre><code><span class="c"># CONTEXT_addEmployee.md — People Hub (Layer 3)</span>
+&gt; สถานะ: Context + spec draft เสร็จ — รอเคลียร์ auth/startDate
+&gt; URL: /employees + /employees/new
+&gt; Workspace rules apply (ห้าม git commit เอง)</code></pre>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th style="width:130px">Status</th><th>Item</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill done">DONE</span></td><td>CONTEXT.md / CLAUDE.md</td><td>กฎโปรเจกต์พร้อมใช้</td></tr>
+        <tr><td><span class="pill wip">กำลังทำ</span></td><td>Requirement + AC</td><td>รอเคลียร์ auth/startDate</td></tr>
+        <tr><td><span class="pill todo">NOT STARTED</span></td><td>Prisma + API + UI + tests</td><td>ลงมือหลัง plan ผ่าน review</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><em>เปิดมาพรุ่งนี้รู้ทันทีว่าค้างตรงไหน — ไม่ต้อง re-investigate</em></p>
+  </section>
+
+  <!-- REAL RULE FILE -->
+  <section class="slide">
+    <span class="eyebrow">01 / CONTEXT · ตัวอย่างจริง</span>
+    <h2>ไฟล์ rule ที่ commit เข้า repo</h2>
+    <div class="cols">
+      <div>
+<pre><code><span class="c"># people-hub / Employee DB</span>
+Stack: Next.js · PostgreSQL + Prisma · Zod
+Run: pnpm dev   Test: pnpm test
+DB: pnpm prisma migrate dev
+
+<span class="c">## Rules</span>
+- Validate input with Zod before Prisma
+- Use Prisma only — no raw SQL
+- Duplicate email → 409 (no stack trace)
+- Do not edit applied migrations
+- Reuse lib/schema/employee.ts in API + UI</code></pre>
+      </div>
+      <div class="stack">
+        <div><strong>บอก stack + คำสั่ง</strong><br><span class="muted">มันจะไม่เดา framework / วิธีรัน test เอง</span></div>
+        <div><strong>ชี้ pattern ที่มีอยู่</strong><br><span class="muted">“ใช้ <code>lib/schema/employee.ts</code> ร่วมกัน” = ไม่แยก validation คนละชุด</span></div>
+        <div><strong>เขียนข้อห้ามไว้</strong><br><span class="muted">กันมันหลุดออกนอกแนวทางทีม</span></div>
+      </div>
+    </div>
+    <p><strong>commit ไฟล์เดียว → ทุก session + ทุกคนในทีม ได้บริบทเดียวกันทันที</strong></p>
+  </section>
+
+  <!-- 14 · TEMPLATE web+api+db -->
+  <section class="slide">
+    <span class="eyebrow">01 / CONTEXT · TEMPLATE</span>
+    <h2>Context file สำหรับ web + API + DB</h2>
+    <p class="lede"><em>เริ่มโปรเจกต์ใหม่ — ใส่ข้อมูลพวกนี้ใน <code>CLAUDE.md</code> / <code>AGENTS.md</code> แล้ว commit เข้า repo ตั้งแต่วันแรก</em></p>
+    <div class="cols">
+      <div class="stack">
+        <div class="card"><h4>Project &amp; Stack</h4>ภาพรวม+โดเมน · Frontend·API·DB+ORM · runtime/pm/version</div>
+        <div class="card"><h4>Commands</h4>install·dev·build · test·lint·format · db: migrate·seed·reset</div>
+        <div class="card"><h4>Structure &amp; Rules</h4>โครงโฟลเดอร์อะไรอยู่ไหน · naming/error/import · “ทำตาม pattern ใน &lt;ไฟล์&gt;”</div>
+      </div>
+      <div class="stack">
+        <div class="card"><h4>Database</h4>ที่อยู่ schema + กฎ migration · ห้ามแก้ migration ที่ apply แล้ว · ใช้ ORM ไม่เขียน raw SQL</div>
+        <div class="card"><h4>API &amp; Security</h4>route + response/error · validation (zod) + status code · auth + ที่เก็บ secret (ห้าม commit)</div>
+        <div class="card"><h4>Testing &amp; Guards</h4>framework/ที่อยู่/coverage · ห้ามเพิ่ม dependency โดยไม่ถาม · ถามก่อนแก้ schema ไม่แตะ generated</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GSTACK · mini intro -->
+  <section class="slide">
+    <span class="eyebrow">// GSTACK · 30 วินาที</span>
+    <h2>ก่อนเข้าตัวอย่าง: gstack คือทีมช่วยงานที่เรียกด้วย command</h2>
+    <p class="lede"><em>gstack = ชุด skill / command ที่ห่อ workflow ให้ Claude Code — ตอนนี้แค่รู้พอว่า command ที่เห็นใน case มาจากที่นี่</em></p>
+    <div class="cols">
+      <div class="card brand">
+        <h4>คำสั่งที่จะเห็นใน case</h4>
+        <ul>
+          <li><code>/review</code> ให้ AI ช่วยตรวจ diff / หาบั๊ก</li>
+          <li><code>/qa</code> ให้ AI ช่วยทดสอบ scenario</li>
+          <li><code>/ship</code> ช่วยสรุปงานก่อนส่ง PR</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h4 style="color:var(--green)">ตอนนี้ต้องจำแค่นี้</h4>
+        <ul>
+          <li>skill = shortcut ของ workflow ที่ทำซ้ำบ่อย</li>
+          <li>คนยังเป็นคนตัดสินใจและ review เสมอ</li>
+          <li>ติดตั้งใน Claude Code: <code>install gstack</code></li>
+          <li>รายละเอียด command อื่น ๆ ค่อยดูท้าย workshop</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote class="brand">ให้มอง gstack เป็น “ทีมช่วยงาน” ที่เรียกเป็น command ได้ — ไม่ใช่ตัวแทน judgment ของเรา</blockquote>
+  </section>
+
+  <!-- DIVIDER · 03 ตัวอย่างจริง -->
+  <section class="slide divider">
+    <span class="logo"><svg width="26" height="22" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg><span class="wm">CPMatch</span></span>
+    <span class="secnum">03</span>
+    <span class="eyebrow">SECTION</span>
+    <h2>ตัวอย่างจริง</h2>
+    <p>ระบบฐานข้อมูลพนักงาน — จาก context ไปสู่ spec · plan · review · จุดที่คนต้องคุมเอง</p>
+  </section>
+
+  <!-- 15 · REAL EXAMPLE FLOW -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · ตัวอย่างจริง</span>
+    <h2>ตัวอย่าง: ระบบฐานข้อมูลพนักงาน</h2>
+    <p class="lede"><em>1 feature: “เพิ่มพนักงานใหม่” — ไล่ตั้งแต่ init จนเริ่ม implement</em></p>
+    <div class="pipeline">
+      <div class="pnode alt"><div class="pdot">1</div><div class="pname">Init</div><div class="pdesc">ตั้งโปรเจกต์</div></div>
+      <div class="pnode"><div class="pdot">2</div><div class="pname">Context</div><div class="pdesc">AI ร่าง context file</div></div>
+      <div class="pnode"><div class="pdot">3</div><div class="pname">Spec</div><div class="pdesc">user story + AC</div></div>
+      <div class="pnode"><div class="pdot">4</div><div class="pname">Plan</div><div class="pdesc">วางแผนก่อนเขียน</div></div>
+      <div class="pnode"><div class="pdot">5</div><div class="pname">Implement</div><div class="pdesc">ลงมือทีละ step</div></div>
+      <div class="pnode alt"><div class="pdot">6</div><div class="pname">Review</div><div class="pdesc">คุมจุดสำคัญ</div></div>
+    </div>
+    <ul>
+      <li><strong>Init → Context</strong> — ให้ AI ร่าง context file ตาม template เรา review</li>
+      <li><strong>Spec → Plan</strong> — เขียน user story + AC → สั่ง AI วางแผนก่อนเขียนโค้ด</li>
+      <li><strong>Implement → Review</strong> — ลงมือทีละ step · review ทุกก้อน · คุมงาน 30% สุดท้ายเอง</li>
+    </ul>
+  </section>
+
+  <!-- 16 · STEP 1 INIT -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · STEP 1 — INIT</span>
+    <h2>ไม่ต้องเขียน context เอง — ให้ AI ร่าง</h2>
+    <p class="lede"><em>ใช้ prompt ให้ AI ร่างโครง แล้วเรา review (AI scan/draft · human review)</em></p>
+    <div class="stack">
+      <div class="card brand">
+        <h4>① เปิดด้วย (framing)</h4>
+        “เริ่มโปรเจกต์ใหม่: ระบบฐานข้อมูลพนักงาน (web app + REST API + PostgreSQL) ยังไม่มีโค้ด ช่วยร่าง <code>CONTEXT.md</code> แล้ว mirror เป็น <code>CLAUDE.md</code>/<code>AGENTS.md</code> — อย่าเพิ่งเขียนโค้ด feature ถ้าไม่ชัดให้ถามก่อน ห้ามเดา”
+      </div>
+      <div class="card brand">
+        <h4>② กำหนดโครงสร้างที่ต้องมี</h4>
+        “ขอให้มีหัวข้อครบ: Hard rules บนสุด · Project+โดเมน · Stack(+version) · Commands · Structure(tree+layer) · Conventions(naming/error/response) · Database(schema/migration/no raw SQL) · API &amp; Security(validation/auth/secret) · Testing — ใช้ตาราง+tree แทนพารากราฟ, term/ชื่อไฟล์เป็นอังกฤษ, กฎเจาะจง+ตรวจได้”
+      </div>
+    </div>
+    <p><strong>→ AI ร่าง → review + แก้กฎให้ตรงทีม → commit + mirror ทุกชื่อไฟล์</strong></p>
+  </section>
+
+  <!-- example · CONTEXT.md ที่ AI ร่าง -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · ผลลัพธ์ STEP 1</span>
+    <h2>CONTEXT.md ที่ AI ร่างออกมา</h2>
+    <p class="lede"><em>เรา review + แก้กฎให้ตรงทีม → commit เข้า repo</em></p>
+<pre><code><span class="c"># CONTEXT.md — Employee DB</span>
+Stack: Next.js · API routes · PostgreSQL + Prisma · Zod
+Run: pnpm dev   Test: pnpm test   DB: pnpm prisma migrate
+
+<span class="c">## โครงสร้าง</span>
+app/employees/        หน้า list / create / edit
+app/api/employees/    route handlers
+lib/schema/           Zod schema (แชร์ client/server)
+prisma/schema.prisma  ตาราง + migration
+
+<span class="c">## กฎ (hard rules)</span>
+- ทุก input ผ่าน Zod ก่อนแตะ DB
+- ใช้ Prisma เท่านั้น — ห้าม raw SQL
+- อีเมลซ้ำ → ตอบ 409 (ไม่หลุด stack trace)
+- ห้ามแก้ migration ที่ apply แล้ว · ถามก่อนแก้ schema
+
+<span class="c">## recipe เพิ่ม field ใหม่</span>
+<span class="k">1</span> แก้ prisma schema → migrate
+<span class="k">2</span> อัปเดต Zod schema
+<span class="k">3</span> แก้ API + UI ที่ใช้ schema ร่วม
+<span class="k">4</span> เพิ่ม test ครอบ field ใหม่</code></pre>
+    <p class="muted"><em><strong>CLAUDE.md</strong> (Layer 1) = ไฟล์บาง ๆ ที่ชี้มาอ่าน <code>CONTEXT.md</code> นี้ + กฎเหล็ก แล้ว mirror เป็น <code>AGENTS.md</code> อัตโนมัติ</em></p>
+  </section>
+
+  <!-- example · CLAUDE.md (entry) -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · ผลลัพธ์ STEP 1 (Layer 1)</span>
+    <h2>CLAUDE.md — ไฟล์ entry ที่ชี้มา CONTEXT.md</h2>
+    <p class="lede"><em>บาง ๆ · กฎเหล็ก + ชี้ว่าให้อ่านอะไรก่อน · mirror เป็น <code>AGENTS.md</code> อัตโนมัติ</em></p>
+<pre><code><span class="c"># CLAUDE.md — Employee DB   &lt;!-- mirror → AGENTS.md · อย่าแก้มือ --&gt;</span>
+<span class="c">## อ่านก่อนเริ่มงาน</span>
+1. @CONTEXT.md            architecture · กฎ · recipe (ของจริงอยู่นี่)
+2. @CONTEXT_&lt;feature&gt;.md   งานที่กำลังทำ (ถ้ามี)
+<span class="c">## Hard rules (ห้ามพลาด)</span>
+- ห้าม git commit / push เอง — ให้คนกด
+- ห้ามแก้ migration ที่ apply แล้ว · ถามก่อนแก้ schema
+- ห้ามเพิ่ม dependency ใหม่ · ไม่ชัด → ถามก่อน ห้ามเดา
+<span class="c">## Commands</span>
+dev: pnpm dev   ·   test: pnpm test   ·   lint: pnpm lint
+<span class="c">## Skills</span>
+/review ก่อนเปิด PR   ·   /qa เทสต์ browser จริง</code></pre>
+  </section>
+
+  <!-- CASE · SPEC DISCIPLINE -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · SKILL 02 — SPEC</span>
+    <h2>ใน case นี้: สั่งแบบ spec ไม่ใช่ vibe</h2>
+    <p class="lede"><em>ก่อนให้ AI เขียน เราเปลี่ยนคำสั่งกว้าง ๆ ให้เป็น input/output/edge case ที่ตรวจได้</em></p>
+    <div class="cols">
+      <div class="card" style="border-color:var(--brand)">
+        <h4 style="color:var(--brand)">✗ Vibe คลุมเครือ</h4>
+        “ทำระบบเพิ่มพนักงานหน่อย”
+        <p class="muted"><em>→ AI ต้องเดา field, auth, validation, response, edge case เองเกือบหมด</em></p>
+      </div>
+      <div class="card green">
+        <h4 style="color:var(--green)">✓ Spec ชัด</h4>
+        HR เพิ่มพนักงานใหม่ด้วย name/email/department/position/startDate/status, email unique → 409, field ว่าง → error ใต้ช่อง, สำเร็จ → กลับ list เห็นทันที, มี test happy + invalid + duplicate
+      </div>
+    </div>
+    <blockquote>
+      <strong>นิสัยที่ใช้ใน step นี้</strong><br>
+      • <strong>วางแผนก่อนเขียน</strong> — สั่ง “เสนอแนวทางก่อน อย่าเพิ่งเขียนโค้ด” เพื่อจับ ambiguity ตั้งแต่ยังถูก<br>
+      • <strong>แตกเป็นก้าวเล็ก</strong> — DB · validation · API · UI · tests แยก review ได้ทีละก้อน
+    </blockquote>
+  </section>
+
+  <!-- 17 · REQUIREMENT -> PLAN -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · REQUIREMENT → PLAN</span>
+    <h2>เขียน spec → ให้ AI วางแผนก่อน</h2>
+    <div class="cols">
+      <div class="card">
+        <h4>Requirement</h4>
+        เพิ่มพนักงานใหม่ (HR ใช้)
+        <p class="muted"><em>ฟิลด์: ชื่อ-สกุล · email(unique) · แผนก · ตำแหน่ง · วันเริ่มงาน · สถานะ</em></p>
+        <p><strong>AC:</strong></p>
+        <ul>
+          <li>กรอกครบ → บันทึกได้</li>
+          <li>email ซ้ำ → error ไม่บันทึก</li>
+          <li>สำเร็จ → กลับ list เห็นทันที</li>
+          <li>ฟิลด์ว่าง → เตือนใต้ช่อง</li>
+          <li><span class="amber">วันเริ่มงานอนาคต? ← ยังไม่ชัด</span></li>
+        </ul>
+      </div>
+      <div class="card brand">
+        <h4>Plan ที่ AI ตอบกลับ</h4>
+        <p><span class="amber">ถามก่อน (จับ ambiguity):</span> กติกาวันเริ่มงาน · แผนก/ตำแหน่ง free-text หรือ dropdown · ใครมีสิทธิ์ (auth)</p>
+        <p><strong>แผน (commit ทีละก้อน):</strong></p>
+        <ol>
+          <li>Prisma model + migration</li>
+          <li>Zod schema (แชร์ client/server)</li>
+          <li>API POST + GET</li>
+          <li>UI ฟอร์ม + list</li>
+          <li>Tests (happy / ซ้ำ / invalid + e2e)</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- example · แผนเต็มที่ AI เสนอ -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · ผลลัพธ์ PLAN</span>
+    <h2>แผนเต็มที่ AI เสนอกลับมา</h2>
+    <p class="lede"><em>สั่ง “วางแผนก่อน อย่าเพิ่งเขียนโค้ด” → ได้แผนที่ review ได้ก่อนลงมือ</em></p>
+<pre><code><span class="c"># PLAN — เพิ่มพนักงานใหม่</span>
+
+<span class="c">## ถามก่อน (ต้องเคลียร์)</span>
+- วันเริ่มงานเป็นอนาคต: อนุญาตไหม?
+- แผนก/ตำแหน่ง: free-text หรือ dropdown?
+- ใครมีสิทธิ์เพิ่มพนักงาน (auth)?
+
+<span class="c">## ขั้นตอน (commit ทีละก้อน)</span>
+<span class="k">1</span> Prisma model Employee + migration
+   └ name · email@unique · deptId · position · startDate · status
+<span class="k">2</span> Zod schema employeeCreate (แชร์ client/server)
+<span class="k">3</span> API POST + GET /api/employees · email ซ้ำ → 409
+<span class="k">4</span> UI ฟอร์ม (shadcn + zodResolver) + หน้า list
+<span class="k">5</span> Tests: happy · email ซ้ำ · invalid · e2e
+
+<span class="c">## เสร็จเมื่อ (Definition of Done)</span>
+test ผ่าน + เพิ่มพนักงานผ่าน UI ได้จริง</code></pre>
+    <blockquote class="brand"><strong>แผนผ่าน review แล้ว → สั่งให้ลงมือ:</strong> “อ่าน <code>@CONTEXT.md</code> + แผนนี้ แล้วลงมือ <strong>step 1 (Prisma model + migration)</strong> ทีละก้อน · ทำตาม recipe ใน CONTEXT.md · หยุดให้ review ก่อนไป step ถัดไป · ห้าม commit เอง”</blockquote>
+  </section>
+
+  <!-- 18 · IMPLEMENT -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · IMPLEMENT</span>
+    <h2>ลงมือทีละ step — review ทุกก้อน</h2>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th style="width:36px">#</th><th>step</th><th>review focus</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>DB</strong> · Prisma model + migration</td><td>field/unique · ดู migration ก่อน apply</td></tr>
+        <tr><td>2</td><td><strong>Validation</strong> · Zod schema แชร์ client/server</td><td>ครบ field · error message ไทย</td></tr>
+        <tr><td>3</td><td><strong>API</strong> · POST/GET · อีเมลซ้ำ→409 · validate ก่อนแตะ DB</td><td>status code · ไม่หลุด stack trace</td></tr>
+        <tr><td>4</td><td><strong>UI</strong> · ฟอร์ม shadcn + zodResolver (<code>/ux-ui-pro-max</code>)</td><td>ใช้ schema เดียวกับ API · redirect</td></tr>
+        <tr><td>5</td><td><strong>Tests</strong> · api + e2e ตาม AC</td><td>test สะท้อน AC จริง · รันผ่าน</td></tr>
+      </tbody>
+    </table></div>
+    <blockquote>ปิดงาน: <code>/review</code> (หาบั๊ก) › <code>/qa</code> (เทสต์ browser จริง) › <code>/ship</code> (เปิด PR) — ของ gstack</blockquote>
+  </section>
+
+  <!-- CASE · REVIEW DISCIPLINE -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · SKILL 03 — REVIEW</span>
+    <h2>ระหว่าง implement: อยู่ใน loop เสมอ</h2>
+    <p class="lede"><em>โค้ดที่ merge เข้าไป คุณเป็นเจ้าของ — “AI เขียน” ไม่ใช่ข้ออ้างใน PR</em></p>
+    <ul>
+      <li>✓ <strong>อ่าน diff ทุกก้อนตามแผน</strong> — DB · validation · API · UI · tests ต้องเข้าใจว่าทำไมเปลี่ยน</li>
+      <li>✓ <strong>ดู migration ก่อน apply</strong> — field/unique/index ถูกไหม และไม่แก้ migration ที่ apply แล้ว</li>
+      <li><span class="amber">▲</span> <strong>ระวัง failure mode คลาสสิก</strong> — API/แพ็กเกจที่ไม่มีจริง · logic ดูดีแต่ผิด · ช่องโหว่ security · secret หลุด</li>
+      <li>✓ <strong>verify อย่าเชื่อ</strong> — รันจริง รัน test เช็ค duplicate email / invalid field / permission</li>
+      <li><span class="amber">▲</span> <strong>architecture อยู่ในหัวคุณ</strong> — AI มองแค่ local ต้องสั่ง reuse schema/helper/pattern เดิม</li>
+    </ul>
+  </section>
+
+  <!-- CASE · 70% PROBLEM -->
+  <section class="slide">
+    <span class="eyebrow">// PART 3 · SKILL 04 — 70% PROBLEM</span>
+    <h2>ท้าย case: รู้ว่าเมื่อไหร่ต้องคุมเอง</h2>
+    <div class="bar">
+      <div class="f" style="flex:0 0 70%">70% · AI พาไปถึง</div>
+      <div class="r" style="flex:0 0 30%">30% · งานของคุณ</div>
+    </div>
+    <p class="lede"><em>ระบบพนักงานดูเหมือน CRUD ธรรมดา แต่ 30% สุดท้ายคือกฎข้อมูลส่วนบุคคล สิทธิ์ และ schema ที่พลาดแล้วเจ็บจริง</em></p>
+    <div class="cols">
+      <div class="card brand"><h4>ปล่อยให้ AI เต็มที่</h4>scaffold CRUD · ฟอร์ม · validation message · test boilerplate · refactor ตาม pattern · เพิ่ม state/loading/error</div>
+      <div class="card amber"><h4 style="color:var(--amber)">ต้องลงมือคุมเอง</h4>auth/role ของ HR · PDPA/ข้อมูลเงินเดือน · schema/migration · error semantics · approve ก่อน release</div>
+    </div>
+    <p class="green" style="text-align:center; margin-top:.7em">AI ขยาย judgment ที่คุณมีอยู่แล้ว — มี = เร็วขึ้น / ไม่มี = พังเร็วขึ้น</p>
+  </section>
+
+  <!-- DIVIDER · 04 Vibe QA -->
+  <section class="slide divider">
+    <span class="logo"><svg width="26" height="22" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg><span class="wm">CPMatch</span></span>
+    <span class="secnum">04</span>
+    <span class="eyebrow">SECTION</span>
+    <h2>Vibe QA — สั่ง AI เขียน test</h2>
+    <p>เขียน test ให้ครอบโจทย์ ด้วยการ prompt ที่ดี + คิดแบบ QA</p>
+  </section>
+
+  <!-- VIBE QA · mindset -->
+  <section class="slide">
+    <span class="eyebrow">// VIBE QA · แนวคิด</span>
+    <h2>QA เปลี่ยนจาก “เขียน test” → “กำกับ AI เขียน test”</h2>
+    <p class="lede"><em>งานหลักของ QA ไม่ใช่พิมพ์ test เอง — แต่คือรู้ว่า “ต้องเทสอะไร” แล้วสั่ง AI + ตรวจว่ามันครอบจริง</em></p>
+    <div class="cols">
+      <div class="card green">
+        <h4 style="color:var(--green)">ปล่อยให้ AI ทำ</h4>
+        <ul>
+          <li>ร่าง test case จาก AC + spec</li>
+          <li>เขียน boilerplate · API · scenario/e2e</li>
+          <li>รันแล้ววนแก้จนผ่าน</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h4 style="color:var(--amber)">QA ต้องคุมเอง</h4>
+        <ul>
+          <li>ชี้ว่า “อะไรต้องเทส” — edge case · scenario · ทุก AC</li>
+          <li>ตรวจว่า test <strong>ประกบ AC จริง</strong> ไม่ใช่ test ที่ไล่ตามโค้ด (pass เสมอ)</li>
+          <li>จับ AI ที่ “แก้โค้ดให้ test ผ่าน” หรือ mock จนไม่ได้เทสอะไร</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote class="brand">คุณค่าของ QA ยุค vibe = <strong>judgment ว่าครอบพอไหม</strong> ไม่ใช่ความเร็วในการพิมพ์ test</blockquote>
+  </section>
+
+  <!-- VIBE QA · loop infographic -->
+  <section class="slide">
+    <span class="eyebrow">// VIBE QA · วงจร</span>
+    <h2>วงจร Vibe QA — สั่ง · ตรวจ · วน</h2>
+    <p class="lede"><em>ปล่อย AI ทำหนัก แต่คนคุมที่ “ขั้นตรวจ” (3) — ตัดสินว่าครอบ AC พอหรือยัง</em></p>
+    <div class="pipeline">
+      <div class="pnode"><div class="pdot">1</div><div class="pname">AC / Plan</div><div class="pdesc">เริ่มจากแผน</div></div>
+      <div class="pnode"><div class="pdot">2</div><div class="pname">AI ร่าง cases</div><div class="pdesc">list ก่อนเขียน</div></div>
+      <div class="pnode alt"><div class="pdot">3</div><div class="pname">QA review</div><div class="pdesc">ครอบ AC ครบ?</div></div>
+      <div class="pnode"><div class="pdot">4</div><div class="pname">AI เขียน + รัน</div><div class="pdesc">/qa วนแก้</div></div>
+      <div class="pnode alt"><div class="pdot">5</div><div class="pname">ครอบ AC ✓</div><div class="pdesc">ประกบครบ</div></div>
+    </div>
+    <blockquote class="brand">ถ้า step 3 เจอ AC ที่ยังไม่มี test → <strong>วนกลับ step 2</strong> · จุดที่คนต้องอยู่คือ “ตัดสินว่าครอบพอ” ไม่ใช่พิมพ์ test เอง</blockquote>
+  </section>
+
+  <!-- VIBE QA · prompt (อ้างอิง tests/ เดิม) -->
+  <section class="slide">
+    <span class="eyebrow">// VIBE QA · PROMPT</span>
+    <h2>prompt เขียน test (ประกบ plan + ตามของเดิม)</h2>
+    <div class="cols">
+      <div>
+<pre><code><span class="c"># prompt เขียน test</span>
+เขียน test ให้ feature "เพิ่มพนักงาน"
+อ้างอิง AC ใน @CONTEXT.md
+ทำตาม pattern เดิมใน @tests/
+ (โครงสร้าง · การตั้งชื่อ · helper เหมือนของเดิม)
+
+ครอบ 2 ระดับ:
+<span class="k">-</span> API: POST /employees → 201 / 409 / 400 / 403
+<span class="k">-</span> Scenario e2e: กรอกฟอร์ม → เห็นใน list → แก้ได้
+
+ทุก AC ต้องมี test ประกบ + เคสพัง (ว่าง·ซ้ำ·สิทธิ์)
+ใช้ framework เดิมในโปรเจกต์
+ห้ามแก้ business logic เพื่อให้ test ผ่าน</code></pre>
+      </div>
+      <div class="stack">
+        <div class="card brand"><h4>อ้างอิงของเดิมเสมอ</h4>ชี้ <code>@tests/</code> ให้ AI ลอก pattern/helper เดิม — อย่าให้มันตั้ง convention ใหม่เอง</div>
+        <div class="card"><h4>ครอบ 2 ระดับ</h4>API + <strong>scenario (e2e)</strong> ตาม flow ผู้ใช้ ไม่ใช่แค่ endpoint เดี่ยว</div>
+        <div class="card"><h4>ประกบ AC</h4>ขอให้ list คู่ AC ↔ test ก่อน → review → ค่อยเขียน · ปิดด้วย <code>/qa</code></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIBE QA · เพิ่มลง context file -->
+  <section class="slide">
+    <span class="eyebrow">// VIBE QA · CONTEXT FILE</span>
+    <h2>QA ควร prompt อะไรใส่ context file</h2>
+    <p class="lede"><em>เขียนกฎ test ลง <code>CONTEXT.md</code> ครั้งเดียว → ทุก session AI เขียน test สไตล์เดียวกัน ไม่ต้องสั่งซ้ำ</em></p>
+    <div class="cols">
+      <div>
+<pre><code><span class="c"># prompt: เพิ่มส่วน Testing ใน CONTEXT.md</span>
+อ่าน @tests/ แล้วสรุปเป็นกฎลง CONTEXT.md:
+<span class="k">-</span> framework + ที่อยู่ test + วิธีรัน
+<span class="k">-</span> naming + โครงสร้าง (table-driven?)
+<span class="k">-</span> ระดับที่ต้องมี: API + scenario(e2e)
+<span class="k">-</span> กฎ: ทุก AC ต้องมี test ประกบ
+<span class="k">-</span> helper/fixture ที่ reuse ได้</code></pre>
+      </div>
+      <div>
+<pre><code><span class="c"># ผลลัพธ์: ส่วน ## Testing ใน CONTEXT.md</span>
+- framework: vitest · อยู่ใน tests/
+- รัน: pnpm test · e2e: pnpm test:e2e
+- ทุก endpoint = table-driven + scenario
+- ทุก AC ต้องมี test ประกบ (AC ↔ test)
+- ใช้ helper ใน tests/_helpers.ts
+- ห้ามแก้ logic เพื่อให้ test ผ่าน</code></pre>
+      </div>
+    </div>
+    <blockquote>QA ที่เก่งไม่ได้แค่เขียน test เก่ง — แต่ทำให้ “กฎการเทส” อยู่ใน context ที่ AI + ทั้งทีมใช้ร่วมกัน</blockquote>
+  </section>
+
+  <!-- DIVIDER · 05 Multi-agent -->
+  <section class="slide divider">
+    <span class="logo"><svg width="26" height="22" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg><span class="wm">CPMatch</span></span>
+    <span class="secnum">05</span>
+    <span class="eyebrow">SECTION</span>
+    <h2>Multi-agent — ทำงานเป็นทีม AI</h2>
+    <p>ไม่ใช่แค่งาน dev — ใช้ AI หลายตัวแบ่งบทบาท ช่วยงาน PO / product ได้</p>
+  </section>
+
+  <!-- PO · 01 concept -->
+  <section class="slide">
+    <span class="eyebrow">// PO + MULTI-AGENT</span>
+    <h2>ไม่ใช่แค่ dev — PO ก็ใช้ AI เป็น “ทีม” ได้</h2>
+    <p class="lede"><em>แทนที่จะถาม AI ตัวเดียวทำงาน PO ทั้งหมด → แบ่งเป็นทีม agent แต่ละตัวมีบทบาท แล้วคุณเป็นคนเคาะ</em></p>
+    <div class="cols">
+      <div class="stack">
+        <div class="card"><h4>Research</h4>สรุปปัญหา · ตลาด · คู่แข่ง · feedback ลูกค้า</div>
+        <div class="card"><h4>Story writer</h4>แตก epic → user story + acceptance criteria</div>
+        <div class="card"><h4>Critic / Risk</h4>หา edge case · dependency · ความเสี่ยง (จงใจหาจุดพัง)</div>
+      </div>
+      <div class="stack">
+        <div class="card"><h4>Prioritization</h4>จัดลำดับ RICE / MoSCoW · ชั่ง effort vs impact</div>
+        <div class="card brand"><h4>Orchestrator + คุณ (PO)</h4>รวมผลทุก agent · ตัดสินใจ · เป็นคนเคาะสุดท้าย</div>
+      </div>
+    </div>
+    <blockquote class="brand"><strong>Pattern:</strong> orchestrator → agents ทำงานขนาน → critic ค้าน/ตรวจ → <strong>human อนุมัติ</strong></blockquote>
+  </section>
+
+  <!-- PO · 02 workflow -->
+  <section class="slide">
+    <span class="eyebrow">// PO + MULTI-AGENT · WORKFLOW</span>
+    <h2>จาก idea → backlog ที่พร้อมใช้</h2>
+    <div class="pipeline">
+      <div class="pnode alt"><div class="pdot">1</div><div class="pname">Research</div><div class="pdesc">context + คู่แข่ง</div></div>
+      <div class="pnode"><div class="pdot">2</div><div class="pname">Story writer</div><div class="pdesc">PRD + stories + AC</div></div>
+      <div class="pnode"><div class="pdot">3</div><div class="pname">Critic / Risk</div><div class="pdesc">edge case + คำถามค้าง</div></div>
+      <div class="pnode"><div class="pdot">4</div><div class="pname">Prioritize</div><div class="pdesc">จัดลำดับด้วยเกณฑ์</div></div>
+      <div class="pnode alt"><div class="pdot">5</div><div class="pname">คุณ (PO)</div><div class="pdesc">review + เคาะ</div></div>
+    </div>
+    <div class="card"><h4>ผูกกับทักษะใน workshop</h4>
+      <strong>Context:</strong> ทุก agent อ่าน product context เดียวกัน ·
+      <strong>Spec:</strong> ให้ agent ถาม ambiguity ก่อนร่าง ·
+      <strong>Review:</strong> critic ค้านก่อน คน PO เคาะทีหลัง
+    </div>
+    <blockquote>คน PO ไม่ได้หายไป — เปลี่ยนจาก “เขียนเองทุกอย่าง” เป็น <strong>“คุมทีม AI + ตัดสินใจ”</strong></blockquote>
+  </section>
+
+  <!-- PO · 03 PRODUCT_CONTEXT.md -->
+  <section class="slide">
+    <span class="eyebrow">// MULTI-AGENT · ไฟล์บริบทร่วม</span>
+    <h2>ตัวอย่าง PRODUCT_CONTEXT.md</h2>
+    <p class="lede"><em>ไฟล์เดียวที่ agent ทุกตัวอ่านร่วมกัน — เข้าใจ product ตรงกันก่อนเริ่ม</em></p>
+<pre><code><span class="c"># PRODUCT_CONTEXT.md — People Hub (ระบบ HR)</span>
+
+<span class="c">## Vision</span>
+ให้ HR จัดการข้อมูลพนักงานครบใน 1 ที่ ลดงานเอกสารซ้ำ
+
+<span class="c">## Personas</span>
+- HR Officer — เพิ่ม/แก้พนักงาน · ออกรายงาน
+- Manager    — ดูทีมตัวเอง · อนุมัติวันลา
+- Employee   — ดู/แก้ข้อมูลตัวเอง
+
+<span class="c">## Constraints</span>
+- PDPA: ข้อมูลส่วนบุคคลห้ามหลุด / ห้าม log
+- UI ภาษาไทย · เงินเดือนเห็นเฉพาะ HR
+
+<span class="c">## Success metric</span>
+- เพิ่มพนักงานใหม่ &lt; 2 นาที · ลด ticket แก้ข้อมูล 50%
+
+<span class="c">## Out of scope (ตอนนี้)</span>
+- payroll คำนวณภาษี · mobile app</code></pre>
+  </section>
+
+  <!-- PO · 04 prompt -->
+  <section class="slide">
+    <span class="eyebrow">// MULTI-AGENT · PROMPT</span>
+    <h2>prompt ที่สั่งทีม agent</h2>
+    <div class="cols">
+      <div>
+<pre><code><span class="c"># orchestration prompt</span>
+ทำตัวเป็นทีม PO 4 บทบาท ทำงานต่อกัน
+อ่าน PRODUCT_CONTEXT.md ก่อนเสมอ:
+
+<span class="k">1) RESEARCHER</span>
+   สรุปปัญหา + คู่แข่ง 3 ราย
+<span class="k">2) PM</span>
+   เขียน epic → user story + AC
+<span class="k">3) RISK</span>
+   หา edge case + คำถามที่ยังไม่ตอบ
+<span class="k">4) PRIORITIZER</span>
+   จัดลำดับด้วย RICE
+
+กฎ: ข้อมูลไม่พอให้ “ถามก่อน” ห้ามเดา
+จบแล้วสรุปเป็นตารางให้ PO เคาะ</code></pre>
+      </div>
+      <div class="stack">
+        <div class="card brand"><h4>3 อย่างที่ทำให้ prompt เวิร์ก</h4>
+          <strong>1.</strong> ชี้ให้อ่าน context file ก่อน<br>
+          <strong>2.</strong> บังคับให้ “ถาม” เมื่อไม่ชัด (จับ ambiguity)<br>
+          <strong>3.</strong> ขอ output รูปแบบที่ตรวจง่าย (ตาราง)
+        </div>
+        <div class="card"><h4>เริ่มเล็ก</h4>1 prompt หลายบทบาทก่อน → ค่อยแยกเป็นหลาย agent จริงเมื่อจำเป็น</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PO · 05 agent chat -->
+  <section class="slide">
+    <span class="eyebrow">// MULTI-AGENT · ตัวอย่างหน้าจอ</span>
+    <h2>หน้าจอตอน agent คุยกัน</h2>
+    <div class="chat">
+      <div class="msg research"><span class="who">RESEARCHER</span>คู่แข่งหลัก 3 ราย — จุดต่างของเราคือใช้ง่าย + ภาษาไทยเต็มระบบ</div>
+      <div class="msg pm"><span class="who">PM</span>ร่าง 5 user stories + AC แล้ว เช่น “HR เพิ่มพนักงาน → ถ้า email ซ้ำต้องเตือน”</div>
+      <div class="msg risk"><span class="who">RISK</span>ขอถามก่อน 2 ข้อ: วันเริ่มงานเป็นอนาคตได้ไหม? · ใครเห็นเงินเดือนบ้าง?</div>
+      <div class="msg po"><span class="who">คุณ (PO)</span>วันเริ่มงานอนาคตได้ · เงินเดือนเห็นเฉพาะ HR → ไปต่อได้</div>
+      <div class="msg prio"><span class="who">PRIORITIZER</span>จัดลำดับ RICE: 1) เพิ่มพนักงาน 2) ค้นหา/กรอง 3) ออกรายงาน</div>
+    </div>
+    <blockquote>เห็น “ทาง” ของแต่ละ agent → ตรวจได้ว่าใครคิดอะไร และเข้าไปแก้จุดที่ผิดได้ตรงจุด</blockquote>
+  </section>
+
+  <!-- PO · 06 เครื่องมือ -->
+  <section class="slide">
+    <span class="eyebrow">// MULTI-AGENT · เครื่องมือ</span>
+    <h2>เครื่องมือที่ช่วยได้</h2>
+    <div class="cols">
+      <div class="card brand"><h4>product context file</h4><code>PRODUCT_CONTEXT.md</code> — vision · persona · constraint · glossary ให้ทุก agent อ่านร่วม แล้ว commit ไว้ใน repo</div>
+      <div class="card brand"><h4>gstack = multi-agent สำเร็จรูป</h4><code>/office-hours</code> เจาะไอเดีย · <code>/plan-ceo-review</code> กลยุทธ์/scope · <code>/autoplan</code> review หลาย role</div>
+    </div>
+    <blockquote>ไม่ต้องสร้างเองทั้งหมด — gstack มีทีม agent ให้ใช้เลย (ดูสไลด์เครื่องมือแนะนำท้าย ๆ)</blockquote>
+  </section>
+
+  <!-- DIVIDER · 06 Team Lead -->
+  <section class="slide divider">
+    <span class="logo"><svg width="26" height="22" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg><span class="wm">CPMatch</span></span>
+    <span class="secnum">06</span>
+    <span class="eyebrow">SECTION · สำหรับหัวหน้าทีม</span>
+    <h2>นำทีม vibe coding ยังไงให้รอด</h2>
+    <p>เครื่องมือแรงขึ้น = ทีมไปได้เร็วขึ้น หรือพังเร็วขึ้น — อยู่ที่คนนำวางระบบ</p>
+  </section>
+
+  <!-- TEAM LEAD · practices -->
+  <section class="slide">
+    <span class="eyebrow">// TEAM LEAD · ข้อควรปฏิบัติ</span>
+    <h2>7 ข้อที่หัวหน้าทีมต้องวางให้ทีม</h2>
+    <div class="cols">
+      <div class="stack">
+        <div class="card"><h4>ตั้งมาตรฐานกลาง</h4>context file ระดับทีม (<code>CLAUDE.md</code>/<code>CONTEXT.md</code>) commit ให้ทุกคน + AI ใช้ baseline เดียวกัน</div>
+        <div class="card"><h4>review เป็นกติกา</h4>โค้ด AI ผ่าน review เท่า PR คน · ห้าม merge สิ่งที่ไม่มีใครเข้าใจ</div>
+        <div class="card"><h4>แบ่งงานตาม 70%</h4>ปล่อย AI งานซ้ำ/boilerplate · ให้คนคุม security · architecture · hot path</div>
+      </div>
+      <div class="stack">
+        <div class="card"><h4>Definition of Done</h4>= รันจริง + test ผ่าน ไม่ใช่แค่ “compile ได้”</div>
+        <div class="card"><h4>วาง guardrails</h4>permission · แยก branch · ห้าม agent แตะ secret / prod</div>
+        <div class="card"><h4>วัดที่ outcome</h4>feature ที่ส่งได้ + คุณภาพ ไม่ใช่จำนวนบรรทัด/วัน (AI ทำ LOC เฟ้อ)</div>
+        <div class="card"><h4>สั่งให้ reuse ไม่เขียนซ้ำ</h4>ตั้งกติกาให้ AI หา component/util ที่มีอยู่มาใช้ก่อนเขียนใหม่ · สั่ง refactor รวมโค้ดซ้ำ — กัน AI สร้างของซ้ำซ้อน</div>
+      </div>
+    </div>
+    <blockquote class="brand"><strong>ระวัง:</strong> junior ที่พึ่ง AI จนไม่เข้าใจโค้ด = ทีมโตช้า — ให้เข้าใจสิ่งที่ AI เขียน + แชร์ prompt/recipe ที่เวิร์กให้ทั้งทีม</blockquote>
+  </section>
+
+  <!-- DIVIDER · 07 นำไปใช้ + ปิดท้าย -->
+  <section class="slide divider">
+    <span class="logo"><svg width="26" height="22" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg><span class="wm">CPMatch</span></span>
+    <span class="secnum">07</span>
+    <span class="eyebrow">SECTION</span>
+    <h2>นำไปใช้ + ปิดท้าย</h2>
+    <p>งานที่เอาไปใช้ได้เลย · Git hygiene · เครื่องมือแนะนำ · ติดตั้ง</p>
+  </section>
+
+  <!-- USE CASES -->
+  <section class="slide">
+    <span class="eyebrow">// USE CASES · ตัวอย่างงานจริง</span>
+    <h2>งานที่เอาไปใช้ได้เลย</h2>
+    <div class="cols">
+      <ul>
+        <li><strong>เริ่มงานใน codebase ที่ไม่คุ้น</strong><br><span class="muted"><em>“อธิบาย flow การ auth ไล่จากไฟล์ไหนบ้าง”</em></span></li>
+        <li><strong>เขียน test ให้โค้ดที่ยังไม่มี</strong><br><span class="muted"><em>“เขียน table-driven test ครอบ edge case”</em></span></li>
+        <li><strong>Refactor กว้าง ๆ</strong><br><span class="muted"><em>“แยก logic นี้เป็น service ตาม pattern ใน X”</em></span></li>
+      </ul>
+      <ul>
+        <li><strong>Debug จาก error / log</strong><br><span class="muted"><em>“นี่ stack trace — หาสาเหตุ + เสนอ fix”</em></span></li>
+        <li><strong>Boilerplate / งานซ้ำ ๆ</strong><br><span class="muted"><em>“สร้าง CRUD endpoint ตามแบบที่มีอยู่”</em></span></li>
+        <li><strong>แปลง / พอร์ตโค้ด</strong><br><span class="muted"><em>“แปลงสคริปต์ bash นี้เป็น Go”</em></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- GIT HYGIENE -->
+  <section class="slide">
+    <span class="eyebrow">SAFETY NET</span>
+    <h2>Git hygiene = กล้าเร็วได้</h2>
+    <p class="lede"><em>ตาข่ายนิรภัยที่ทำให้กล้าปล่อยให้ AI ลองได้ โดยย้อนกลับได้เสมอ</em></p>
+    <ol>
+      <li><strong>commit เล็ก · commit บ่อย</strong> — rollback ง่ายเวลา AI หลุดโลก ย้อนแค่ก้าวเดียว ไม่ใช่ทั้งวัน</li>
+      <li><strong>git diff คือพื้นที่ review</strong> — ทุก change ผ่านสายตาคุณก่อน merge เสมอ</li>
+      <li><strong>อย่าปล่อย change ค้างกองพะเนิน</strong> — ของที่ยังไม่ commit เยอะ ๆ = ย้อนกลับไม่สะอาด แยกของดี/เสียไม่ออก</li>
+    </ol>
+  </section>
+
+  <!-- SKILLS · ใช้งาน -->
+  <section class="slide">
+    <span class="eyebrow">// SKILLS · ใช้งาน</span>
+    <h2>skill คืออะไร — แล้วใช้ยังไง</h2>
+    <p class="lede"><em>skill = workflow สำเร็จรูปที่เรียกด้วย <code>/command</code> — แทนการพิมพ์ prompt ยาว ๆ ซ้ำ ๆ</em></p>
+    <div class="cols">
+      <div class="card green">
+        <h4 style="color:var(--green)">ใช้ง่าย ๆ</h4>
+        <ul>
+          <li>พิมพ์ <code>/&lt;ชื่อ&gt;</code> เช่น <code>/review</code> · <code>/qa</code> · <code>/ship</code></li>
+          <li>skill ทำงานหลาย step ให้เอง — ไม่ต้องพิมพ์ prompt ยาว</li>
+          <li>ส่ง argument เพิ่มได้</li>
+        </ul>
+      </div>
+      <div class="card brand">
+        <h4>ทำไมดีกว่า prompt สด</h4>
+        <ul>
+          <li>มาตรฐานเดียวทั้งทีม — ใครเรียกก็ได้ผลเหมือนกัน</li>
+          <li>deterministic + version-controlled</li>
+          <li>best practice ฝังอยู่ในตัว skill</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote class="brand">ที่เห็นใน workshop นี้: <code>/review</code> หาบั๊ก · <code>/qa</code> เทส · <code>/ship</code> เตรียมส่งงาน · <code>/office-hours</code> เจาะไอเดีย</blockquote>
+  </section>
+
+  <!-- SKILLS · บริหาร -->
+  <section class="slide">
+    <span class="eyebrow">// SKILLS · บริหาร</span>
+    <h2>บริหาร skill ให้ทั้งทีมได้ใช้</h2>
+    <div class="cols">
+      <div class="card">
+        <h4>ติดตั้ง & ขอบเขต</h4>
+        <ul>
+          <li><strong>project skill</strong> (ใน repo) vs <strong>global</strong> (เครื่องตัวเอง)</li>
+          <li>commit skill เข้า repo → ทั้งทีม + CI ใช้เหมือนกัน</li>
+          <li>เปิด/ปิดเฉพาะที่ต้องใช้ได้</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>เขียน skill เอง</h4>
+        <ul>
+          <li>ห่อ workflow ที่ทำซ้ำบ่อยเป็น skill (เช่น “สร้าง CRUD ตาม pattern”)</li>
+          <li>ฝัง context/กฎทีมไว้ในตัว skill</li>
+          <li>แชร์ผ่าน repo เหมือน context file</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote>skill = context engineering ระดับ “ขั้นตอนการทำงาน” — เขียนครั้งเดียว ทีมใช้ซ้ำได้ตลอด</blockquote>
+  </section>
+
+  <!-- 25 · RECOMMENDED SKILLS -->
+  <section class="slide">
+    <span class="eyebrow">// RECOMMENDED SKILLS · ของทีม</span>
+    <h2>Skill ที่แนะนำให้ติดไว้</h2>
+    <div class="cols">
+      <div class="card brand">
+        <h3><code>/gstack</code></h3>
+        <p class="muted"><em>ทีมวิศวกรเสมือน · workflow · ฟรี MIT</em></p>
+        <p>ชุด skill โอเพนซอร์สของ Garry Tan (CEO, YC) เปลี่ยน Claude Code เป็นทีม 23+ บทบาท — CEO / Eng / Designer / QA / Security / Release</p>
+        <ul>
+          <li>สปรินต์: Think → Plan → Build → Review → Test → Ship</li>
+          <li>คำสั่งเด่น: <code>/office-hours /autoplan /review /qa /ship /cso</code></li>
+          <li><code>/careful /freeze /guard</code> กันคำสั่งอันตราย + commit ให้ทั้งทีม</li>
+        </ul>
+        <p><strong>เหมาะกับ</strong> อยากมี process + auto review/QA ทุก PR</p>
+      </div>
+      <div class="card brand">
+        <h3><code>/ux-ui-pro-max</code></h3>
+        <p class="muted"><em>design intelligence · ฟรี MIT</em></p>
+        <p>ฐานข้อมูลดีไซน์ให้ AI — 50+ styles · 161 palettes · 57 font pairings · 99 UX rules · 25 chart types ครอบ 10+ stack</p>
+        <ul>
+          <li>ขอ UI ปุ๊บ สร้าง design system + แนะนำ style/สี/ฟอนต์ ตามชนิดงาน</li>
+          <li>ครอบ React / Next / Vue / Svelte / SwiftUI / Flutter / Tailwind / shadcn</li>
+          <li>ใช้ตอนทำ landing · dashboard · SaaS · mobile หรือ review UI</li>
+        </ul>
+        <p><strong>เหมาะกับ</strong> ทำ UI สวยระดับโปร เลี่ยง “AI slop”</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 26 · INSTALL -->
+  <section class="slide">
+    <span class="eyebrow">// INSTALL · สแกนเพื่อเริ่ม</span>
+    <h2>ติดตั้งแล้วเริ่มใช้ได้เลย</h2>
+    <div class="cols">
+      <div class="card qr">
+        <h3><code>/gstack</code></h3>
+        <img src="qr_gstack.png" alt="QR gstack">
+        <a href="https://github.com/garrytan/gstack">github.com/garrytan/gstack</a>
+        <p><code>install gstack</code></p>
+        <p class="muted"><em>รันใน Claude Code หลังวางลิงก์ repo / เปิดหน้า repo</em></p>
+        <p class="muted">ต้องมี Claude Code + Bun · ฟรี MIT</p>
+      </div>
+      <div class="card qr">
+        <h3><code>/ux-ui-pro-max</code></h3>
+        <img src="qr_uiux.png" alt="QR ux-ui-pro-max">
+        <a href="https://ui-ux-pro-max-skill.nextlevelbuilder.io/">ui-ux-pro-max-skill.nextlevelbuilder.io</a>
+        <p><code>npm i -g uipro-cli → uipro init --ai claude</code></p>
+        <p class="muted">Claude Code / Cursor / Windsurf · ฟรี MIT</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 27 · RECAP -->
+  <section class="slide">
+    <span class="eyebrow">// RECAP · สรุป + กับดักที่เลี่ยง</span>
+    <h2>เปลี่ยน vibe → ใช้งานจริง</h2>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th style="width:24%">ทักษะ</th><th>✓ ทำ</th><th>✗ เลี่ยง</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Context engineering</strong></td><td>ป้อนบริบทที่ใช่ + commit rule file</td><td class="muted">ไม่มี rule file ปล่อย AI เดาเอง</td></tr>
+        <tr><td><strong>Spec ไม่ใช่ vibe</strong></td><td>สั่งชัด + วางแผนก่อน + ก้าวเล็ก</td><td class="muted">mega-prompt สั่งทีเดียวใหญ่</td></tr>
+        <tr><td><strong>วินัยการ review</strong></td><td>อ่าน diff ทุกบรรทัด เป็นเจ้าของโค้ด</td><td class="muted">รับโค้ดที่ไม่เข้าใจ · เชื่อ “รันผ่าน=ถูก” · API ที่ AI มั่ว</td></tr>
+        <tr><td><strong>70% problem</strong></td><td>ปล่อย AI ที่ง่าย คุมเองที่สำคัญ</td><td class="muted">ปล่อย agent แตะ secret / คำสั่งอันตราย</td></tr>
+      </tbody>
+    </table></div>
+    <blockquote class="brand"><strong>+ Git hygiene</strong> เป็นตาข่ายนิรภัยตลอดทั้ง 4 ทักษะ</blockquote>
+    <span class="logo" style="margin-top:1.3em; font-size:18px">
+      <svg width="28" height="23" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg>
+      <span class="wm">CPMatch</span>
+      <span class="muted mono" style="font-weight:400; font-size:13px; letter-spacing:0; margin-left:4px">· vibe coding workshop</span>
+    </span>
+  </section>
+
+  <!-- THANK YOU -->
+  <section class="slide divider" style="text-align:left">
+    <span class="logo"><svg width="30" height="25" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg><span class="wm">CPMatch</span></span>
+    <h2 style="font-size:3.6em; margin-bottom:.1em">ขอบคุณครับ</h2>
+    <p style="font-size:1.4em; color:#e6e6ec; margin:.2em 0">Thank you — ลองเอา vibe coding ไปใช้กับงานจริงดูนะครับ</p>
+    <p class="muted mono" style="margin-top:1.4em; letter-spacing:1px">คำถาม / คุยต่อได้เลย · vibe coding workshop · CPMatch</p>
+  </section>
+
+</main>
+
+<!-- present-mode controls -->
+<div class="pnav present-only">
+  <button onclick="setMode('read')">✕ ออก</button>
+  <span class="pnav-sec" id="pnavSec"></span>
+  <button onclick="go(-1)">←</button>
+  <span class="count" id="count">1 / 1</span>
+  <button onclick="go(1)">→</button>
+</div>
+<div class="kbdhint present-only"><b>←</b> <b>→</b> เลื่อน · <b>Esc</b> ออก</div>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total = slides.length;
+let idx = 0;
+let mode = 'read';
+
+// section label shown in the header per slide (index-aligned with slide order)
+const SECTIONS = [
+  'vibe coding · workshop',     // 1 lead
+  'ปัญหาที่เจอบ่อย',              // 2 painpoint
+  'Agenda',                     // 3
+  'ภาพรวม',                      // 4 DIV 01
+  'ภาพรวม',                      // 5 overview
+  'ภาพรวม · 4 ทักษะ',            // 6 skills
+  'Context Engineering',        // 7 DIV 02
+  'Context Engineering',        // 8
+  'Context Engineering',        // 9
+  'Context Engineering',        // 10
+  'Context Engineering',        // 11
+  'Context Engineering',        // 12
+  'Context Engineering',        // 13
+  'Context Engineering',        // 14
+  'Context Engineering',        // 15
+  'Context Engineering',        // 16
+  'gstack · 30 วินาที',          // 17 mini intro
+  'ตัวอย่างจริง · ระบบพนักงาน',     // 18 DIV 03
+  'ตัวอย่างจริง · ระบบพนักงาน',     // 19
+  'ตัวอย่างจริง · ระบบพนักงาน',     // 20
+  'ตัวอย่างจริง · ระบบพนักงาน',     // 21
+  'ตัวอย่างจริง · ระบบพนักงาน',     // 22
+  'ตัวอย่างจริง · Spec',          // 23
+  'ตัวอย่างจริง · Plan',          // 24
+  'ตัวอย่างจริง · Plan',          // 25
+  'ตัวอย่างจริง · Implement',     // 26
+  'ตัวอย่างจริง · Review',        // 27
+  'ตัวอย่างจริง · 70%',           // 28
+  'Vibe QA',                    // 29 DIV 04
+  'Vibe QA',                    // 30
+  'Vibe QA',                    // 31 วงจร
+  'Vibe QA',                    // 32
+  'Vibe QA',                    // 33
+  'Multi-agent',                // 34 DIV 05
+  'Multi-agent · PO',           // 35
+  'Multi-agent · PO',           // 36
+  'Multi-agent · PO',           // 37
+  'Multi-agent · PO',           // 38
+  'Multi-agent · PO',           // 39
+  'Multi-agent · PO',           // 40
+  'สำหรับหัวหน้าทีม',             // 41 DIV 06
+  'สำหรับหัวหน้าทีม',             // 42
+  'นำไปใช้ + ปิดท้าย',           // 43 DIV 07
+  'Use cases',                  // 44
+  'Git hygiene',                // 45
+  'Skills',                     // 46 ใช้งาน
+  'Skills',                     // 47 บริหาร
+  'เครื่องมือแนะนำ',              // 48
+  'ติดตั้ง',                      // 49
+  'สรุป',                        // 50
+  'ขอบคุณ',                       // 51
+];
+function setSection(t){
+  if(!t) return;
+  const el=document.getElementById('sectionLabel'); if(el) el.textContent=t;
+  const ps=document.getElementById('pnavSec'); if(ps) ps.textContent=t;
+}
+
+slides.forEach((s,i)=>{ s.dataset.n = i+1; s.dataset.total = total; });
+
+function setMode(m){
+  mode = m;
+  document.body.classList.toggle('mode-present', m==='present');
+  document.body.classList.toggle('mode-read', m==='read');
+  document.getElementById('btn-read').classList.toggle('on', m==='read');
+  document.getElementById('btn-present').classList.toggle('on', m==='present');
+  if(m==='present'){ showSlide(idx); document.documentElement.requestFullscreen?.().catch(()=>{}); }
+  else { slides.forEach(s=>s.style.removeProperty('transform')); setSection(SECTIONS[idx]); if(document.fullscreenElement) document.exitFullscreen?.().catch(()=>{}); }
+}
+
+function showSlide(i){
+  idx = Math.max(0, Math.min(total-1, i));
+  slides.forEach((s,k)=> s.classList.toggle('active', k===idx));
+  document.getElementById('count').textContent = (idx+1)+' / '+total;
+  document.getElementById('pbar').style.width = ((idx+1)/total*100)+'%';
+  setSection(SECTIONS[idx]);
+  fit();
+}
+
+function go(delta){
+  if(mode!=='present'){ setMode('present'); return; }
+  showSlide(idx+delta);
+}
+
+function goPresentAt(i){ idx=i; setMode('present'); }
+
+function fit(){
+  if(mode!=='present') return;
+  const pad = 26;
+  const s = Math.min(
+    (window.innerWidth - pad*2) / 1280,
+    (window.innerHeight - pad*2) / 720
+  );
+  const active = slides[idx];
+  if(active) active.style.transform = `translate(-50%,-50%) scale(${s})`;
+}
+
+window.addEventListener('resize', fit);
+
+document.addEventListener('keydown', e=>{
+  if(mode!=='present'){
+    if(e.key==='ArrowRight' || (e.key===' ' && !e.shiftKey)){ setMode('present'); showSlide(0); e.preventDefault(); }
+    return;
+  }
+  switch(e.key){
+    case 'ArrowRight': case 'PageDown': case ' ': go(1); e.preventDefault(); break;
+    case 'ArrowLeft': case 'PageUp': go(-1); e.preventDefault(); break;
+    case 'Home': showSlide(0); break;
+    case 'End': showSlide(total-1); break;
+    case 'Escape': setMode('read'); slides[idx].scrollIntoView({block:'center'}); break;
+    case 'f': case 'F':
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+      break;
+  }
+});
+
+slides.forEach((s,i)=>{
+  const b = document.createElement('button');
+  b.className='gopres'; b.textContent='นำเสนอจากนี่ ▶';
+  b.onclick=()=>goPresentAt(i);
+  s.appendChild(b);
+});
+
+// reading mode: update header section label as you scroll (scroll-spy)
+const spy = new IntersectionObserver(entries=>{
+  if(mode!=='read') return;
+  entries.forEach(e=>{
+    if(e.isIntersecting){ const i = slides.indexOf(e.target); if(i>=0) setSection(SECTIONS[i]); }
+  });
+}, {rootMargin:'-45% 0px -45% 0px', threshold:0});
+slides.forEach(s=>spy.observe(s));
+setSection(SECTIONS[0]);
+</script>
+</body>
+</html>
