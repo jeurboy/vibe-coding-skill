@@ -248,9 +248,10 @@ aside .hd{font-family:var(--mono); font-size:11px; font-weight:700; letter-spaci
 
 รายละเอียดเชิงเทคนิค:
 - มีทั้ง website และ mobile app
-- Web: Next.js + Prisma + Tailwind (แนะนำการวาง structure ด้วย)
+- Web: Next.js + Tailwind, ดึงข้อมูลผ่าน API ด้วย React Query (TanStack Query) — ไม่ต่อ DB ตรง (แนะนำการวาง structure ด้วย)
 - App: Flutter เป็นหลัก (แนะนำ stack อื่น + structure ด้วย)
 - API: Go + GORM, raw query ให้น้อยที่สุด, วาง folder แบบ Uncle Bob clean architecture
+- จัดการ schema/migration ด้วย GORM AutoMigrate (ไม่ใช้ migration tool แยก)
 - DB: Postgres + สร้าง docker ให้ด้วย
 - ทุก service ก่อนจบ plan ต้องสรุป tech stack + architecture design ให้ครบก่อนเริ่มลงมือ
 - unit test ที่ API + UI test ผ่าน Playwright, coverage > 80%

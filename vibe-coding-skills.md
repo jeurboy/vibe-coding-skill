@@ -1297,7 +1297,7 @@ SECTION · ลงมือทำ
 </div>
 </div>
 
-`Web · Next.js + Prisma + Tailwind` · `App · Flutter` · `API · Go + GORM (clean arch)` · `DB · Postgres + Docker`
+`Web · Next.js + React Query + Tailwind` · `App · Flutter` · `API · Go + GORM AutoMigrate` · `DB · Postgres + Docker`
 
 > **กติกา:** plan ก่อนทุก feature · สรุป tech stack + architecture ก่อนลงมือ · test coverage > 80% (API unit + Playwright) · โทนสีตาม design CPMatch Care
 

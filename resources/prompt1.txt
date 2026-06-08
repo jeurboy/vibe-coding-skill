@@ -21,9 +21,10 @@ Layer 3 เก็บไฟล์ plan ทั้งหมด ในทุก feat
 รายละเอียด เชิง technic
 
 ระบบมีทั้ง website และ mobile app
-Website ใช้ nextjs มี orm เป็น prisma และใช้ css เป็น tailwind แนะนำการวาง structure ด้วย
+Website ใช้ nextjs ดึงข้อมูลผ่าน API ด้วย react query (TanStack Query) ไม่ต่อ DB ตรง และใช้ css เป็น tailwind แนะนำการวาง structure ด้วย
 App ใช้ flutter เป็นหลักและช่วยแนะนำ stack อื่นด้วย แนะนำการวาง structure ด้วย
 Api ใช้ golang และ ใช้ gorm เป็น orm และ ใช้ raw query ให้น้อยที่สุด ใช้ การวาง folder แบบ uncle bob clean architecture
+จัดการ schema/migration ด้วย gorm automigrate (ไม่ใช้ migration tool แยก)
 Db ใช้ postgres ช่วยสร้าง docker ให้ด้วย
 
 ทุก service ก่อนจบการ  plan ต้อง สรุป tech stack และ architect design ให้ครบก่อนเริ่มลงมือทำ
