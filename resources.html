@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resources — vibe coding @ CPMatch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,700" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#F5273E; --brand-soft:#fdebed; --brand-ink:#b71024; --green:#059669;
+  --ink:#1A1A1E; --muted:#6b6b76; --faint:#a7a7b0; --line:#ececef; --line-strong:#dcdce1;
+  --bg:#fbf5ee; --card:#fff;
+  --sans:'Google Sans','Noto Sans Thai',-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--bg); line-height:1.6; display:flex; flex-direction:column}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+
+header{display:flex; align-items:center; gap:14px; padding:13px 22px; border-bottom:1px solid var(--line); background:rgba(251,245,238,.95); backdrop-filter:blur(8px); flex:none}
+.logo{display:inline-flex; align-items:center; gap:8px; font-weight:700; color:var(--brand)}
+.logo .wm{color:var(--ink); letter-spacing:.5px}
+.tabs{display:inline-flex; background:var(--card); border:1px solid var(--line-strong); border-radius:11px; padding:3px; gap:2px; margin-left:8px}
+.tabs button{font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--muted); background:none; border:0; padding:7px 15px; border-radius:8px; cursor:pointer; transition:.15s}
+.tabs button.on{background:var(--brand); color:#fff}
+header .back{margin-left:auto; font-family:var(--mono); font-size:13px; font-weight:700; padding:8px 14px; border:1px solid var(--line-strong); border-radius:9px; background:#fff; color:var(--ink)}
+header .back:hover{border-color:var(--brand); color:var(--brand); text-decoration:none}
+
+.panel{flex:1; min-height:0; display:none}
+.panel.on{display:flex}
+
+/* ===== TAB: คลัง prompt (สรุป) ===== */
+#tab-prompts{flex-direction:column; overflow-y:auto}
+.wrap{max-width:880px; width:100%; margin:0 auto; padding:0 22px 80px}
+.hero{padding:34px 0 4px}
+.hero .eyebrow{font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:1px; color:var(--brand); text-transform:uppercase}
+.hero h1{font-size:2.2em; margin:.14em 0 .1em; letter-spacing:-.5px}
+.hero p{color:var(--muted); font-size:1.02em; margin:.2em 0 0}
+.toc{display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 4px}
+.toc a{font-family:var(--mono); font-size:12.5px; font-weight:700; padding:7px 13px; border-radius:999px; background:#fff; border:1px solid var(--line-strong); color:var(--ink)}
+.toc a:hover{border-color:var(--brand); color:var(--brand); text-decoration:none}
+section.grp{margin-top:32px; scroll-margin-top:20px}
+.grp > h2{font-size:1.3em; margin:0 0 10px; display:flex; align-items:center; gap:10px}
+.grp > h2 .gnum{font-family:var(--mono); font-weight:700; color:var(--brand); font-size:.78em; background:var(--brand-soft); border-radius:8px; padding:2px 9px}
+.prompt{background:var(--card); border:1px solid var(--line-strong); border-radius:14px; margin:12px 0; overflow:hidden}
+.prompt .head{display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid var(--line); background:#fcfcfd}
+.prompt .head h3{margin:0; font-size:.98em; font-weight:700}
+.prompt .head .tag{font-family:var(--mono); font-size:11px; font-weight:700; color:var(--muted); letter-spacing:.5px; text-transform:uppercase}
+.copy{font-family:var(--mono); font-size:12px; font-weight:700; padding:7px 13px; border-radius:8px; border:1px solid var(--line-strong); background:#fff; color:var(--ink); cursor:pointer; transition:.15s}
+.copy:hover{border-color:var(--brand); color:var(--brand)}
+.copy.done{background:var(--green); border-color:var(--green); color:#fff}
+.copy:disabled{opacity:.4; cursor:default}
+.prompt .copy{margin-left:auto}
+.prompt pre{margin:0; padding:16px 18px; font-family:var(--mono); font-size:13.5px; line-height:1.7; white-space:pre-wrap; word-break:break-word; color:#23232a}
+footer{margin-top:44px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.9em; font-family:var(--mono)}
+
+/* ===== TAB: file browser ===== */
+#tab-files{min-height:0}
+aside{width:280px; flex:none; border-right:1px solid var(--line); overflow-y:auto; background:#fff}
+aside .hd{font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:1px; color:var(--muted); text-transform:uppercase; padding:16px 18px 8px}
+.file{display:flex; align-items:center; gap:10px; padding:11px 18px; cursor:pointer; border-left:3px solid transparent; font-size:14px}
+.file:hover{background:var(--bg)}
+.file.active{background:var(--brand-soft); border-left-color:var(--brand); color:var(--brand-ink); font-weight:600}
+.file .ic{flex:none; color:var(--muted)}
+.file.active .ic{color:var(--brand)}
+.file .nm{flex:1; font-family:var(--mono); word-break:break-all}
+.file .sz{font-family:var(--mono); font-size:11px; color:var(--faint)}
+.file.empty .nm{color:var(--muted)}
+.viewer{flex:1; display:flex; flex-direction:column; min-width:0}
+.vbar{display:flex; align-items:center; gap:12px; padding:13px 22px; border-bottom:1px solid var(--line); background:#fcfcfd}
+.vbar .path{font-family:var(--mono); font-size:13.5px; font-weight:700}
+.vbar .path .dir{color:var(--muted); font-weight:400}
+.vbar .copy{margin-left:auto}
+.view{flex:1; overflow:auto}
+.view pre{margin:0; padding:24px 26px; font-family:var(--mono); font-size:14px; line-height:1.75; white-space:pre-wrap; word-break:break-word; color:#23232a}
+.empty-msg,.err-msg{padding:40px 26px; color:var(--muted); font-family:var(--mono); font-size:14px}
+.err-msg{color:var(--brand-ink)}
+
+.toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:11px 20px; border-radius:999px; font-size:14px; font-weight:500; opacity:0; pointer-events:none; transition:.2s; z-index:50}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+@media(max-width:720px){
+  #tab-files{flex-direction:column}
+  aside{width:auto; max-height:32vh; border-right:0; border-bottom:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo"><svg width="24" height="20" viewBox="0 0 120 100" aria-hidden="true"><path fill="currentColor" d="M6 92 V8 H32 L60 52 L88 8 H114 V92 H90 V46 L62 86 H58 L30 46 V92 Z"/></svg><span class="wm">CPMatch</span></span>
+  <div class="tabs">
+    <button id="tb-prompts" class="on" onclick="showTab('prompts')">คลัง prompt</button>
+    <button id="tb-files" onclick="showTab('files')">ไฟล์ resources/</button>
+  </div>
+  <a class="back" href="vibe-coding-skills.html">&larr; กลับไปสไลด์</a>
+</header>
+
+<!-- ============ TAB 1: คลัง prompt (สรุป) ============ -->
+<div class="panel on" id="tab-prompts">
+  <div class="wrap">
+    <div class="hero">
+      <span class="eyebrow">// PROMPT LIBRARY</span>
+      <h1>คลัง prompt</h1>
+      <p>กดปุ่ม <strong>คัดลอก</strong> แล้วเอาไปใช้ได้เลย — ปรับชื่อโปรเจกต์ / ฟิลด์ / กฎ ให้ตรงงานของคุณ</p>
+    </div>
+
+    <nav class="toc">
+      <a href="#ctx">Context</a>
+      <a href="#spec">Spec</a>
+      <a href="#plan">Plan</a>
+      <a href="#impl">Implement</a>
+      <a href="#qa">Vibe QA</a>
+      <a href="#po">PO · Multi-agent</a>
+      <a href="#ws">Workshop · CPMatch Care</a>
+    </nav>
+
+    <section class="grp" id="ctx">
+      <h2><span class="gnum">01</span> Context</h2>
+      <div class="prompt">
+        <div class="head"><span class="tag">①&nbsp;framing</span><h3>เปิดโปรเจกต์ + สั่งร่าง CONTEXT.md</h3><button class="copy">คัดลอก</button></div>
+        <pre>เริ่มโปรเจกต์ใหม่: ระบบฐานข้อมูลพนักงาน (web app + REST API + PostgreSQL) ยังไม่มีโค้ด
+ช่วยร่าง CONTEXT.md แล้ว mirror เป็น CLAUDE.md/AGENTS.md
+— อย่าเพิ่งเขียนโค้ด feature ถ้าไม่ชัดให้ถามก่อน ห้ามเดา</pre>
+      </div>
+      <div class="prompt">
+        <div class="head"><span class="tag">②&nbsp;structure</span><h3>กำหนดหัวข้อที่ context ต้องมี</h3><button class="copy">คัดลอก</button></div>
+        <pre>ขอให้ CONTEXT.md มีหัวข้อครบ:
+- Hard rules (บนสุด)
+- Project + โดเมน
+- Stack (+ version)
+- Commands (dev / test / lint / db)
+- Structure (tree + layer)
+- Conventions (naming / error / response)
+- Database (schema / migration / no raw SQL)
+- API & Security (validation / auth / secret)
+- Testing
+
+ใช้ตาราง + tree แทนพารากราฟ, term/ชื่อไฟล์เป็นอังกฤษ, กฎเจาะจง + ตรวจได้</pre>
+      </div>
+    </section>
+
+    <section class="grp" id="spec">
+      <h2><span class="gnum">02</span> Spec</h2>
+      <div class="prompt">
+        <div class="head"><span class="tag">spec ชัด</span><h3>feature: เพิ่มพนักงานใหม่</h3><button class="copy">คัดลอก</button></div>
+        <pre>HR เพิ่มพนักงานใหม่ด้วย name / email / department / position / startDate / status
+- email ซ้ำ → 409
+- field ว่าง → error ใต้ช่อง
+- สำเร็จ → กลับ list เห็นทันที
+- มี test: happy + invalid + duplicate</pre>
+      </div>
+    </section>
+
+    <section class="grp" id="plan">
+      <h2><span class="gnum">03</span> Plan</h2>
+      <div class="prompt">
+        <div class="head"><span class="tag">plan request</span><h3>ขอแผนเป็นก้าวเล็ก ๆ ก่อน</h3><button class="copy">คัดลอก</button></div>
+        <pre>เสนอแผนก่อน อย่าเพิ่งเขียนโค้ด
+- แตกเป็นก้าวเล็ก: DB → validation → API → UI → tests
+- ระบุไฟล์ที่จะแตะแต่ละก้าว + Definition of Done
+- ถ้ามีจุดคลุมเครือ (เช่น กติกา/สิทธิ์/รูปแบบข้อมูล) ให้ถามก่อน ห้ามเดา</pre>
+      </div>
+    </section>
+
+    <section class="grp" id="impl">
+      <h2><span class="gnum">04</span> Implement</h2>
+      <div class="prompt">
+        <div class="head"><span class="tag">kickoff</span><h3>เริ่ม step แรกตามแผน</h3><button class="copy">คัดลอก</button></div>
+        <pre>อ่าน @CONTEXT.md + แผนนี้ แล้วลงมือ step 1 (Prisma model + migration) ทีละก้อน
+- ทำตาม recipe ใน CONTEXT.md
+- หยุดให้ review ก่อนไป step ถัดไป
+- ห้าม commit เอง</pre>
+      </div>
+    </section>
+
+    <section class="grp" id="qa">
+      <h2><span class="gnum">05</span> Vibe QA</h2>
+      <div class="prompt">
+        <div class="head"><span class="tag">test · ประกบ AC</span><h3>เขียน test (อ้างอิง @tests/ เดิม)</h3><button class="copy">คัดลอก</button></div>
+        <pre>เขียน test ให้ feature "เพิ่มพนักงาน"
+อ้างอิง AC ใน @CONTEXT.md
+ทำตาม pattern เดิมใน @tests/ (โครงสร้าง · การตั้งชื่อ · helper เหมือนของเดิม)
+
+ครอบ 2 ระดับ:
+- API: POST /employees → 201 / 409 / 400 / 403
+- Scenario e2e: กรอกฟอร์ม → เห็นใน list → แก้ได้
+
+ทุก AC ต้องมี test ประกบ + เคสพัง (ว่าง · ซ้ำ · สิทธิ์)
+ใช้ framework เดิมในโปรเจกต์
+ห้ามแก้ business logic เพื่อให้ test ผ่าน</pre>
+      </div>
+      <div class="prompt">
+        <div class="head"><span class="tag">context file</span><h3>เพิ่มส่วน Testing ลง CONTEXT.md</h3><button class="copy">คัดลอก</button></div>
+        <pre>อ่าน @tests/ แล้วสรุปเป็นกฎลง CONTEXT.md:
+- framework + ที่อยู่ test + วิธีรัน
+- naming + โครงสร้าง (table-driven?)
+- ระดับที่ต้องมี: API + scenario (e2e)
+- กฎ: ทุก AC ต้องมี test ประกบ
+- helper/fixture ที่ reuse ได้</pre>
+      </div>
+    </section>
+
+    <section class="grp" id="po">
+      <h2><span class="gnum">06</span> PO · Multi-agent</h2>
+      <div class="prompt">
+        <div class="head"><span class="tag">orchestration</span><h3>ทีม PO 4 บทบาท</h3><button class="copy">คัดลอก</button></div>
+        <pre>ทำตัวเป็นทีม PO 4 บทบาท ทำงานต่อกัน
+อ่าน PRODUCT_CONTEXT.md ก่อนเสมอ:
+
+1) RESEARCHER — สรุปปัญหา + คู่แข่ง 3 ราย
+2) PM — เขียน epic → user story + AC
+3) RISK — หา edge case + คำถามที่ยังไม่ตอบ
+4) PRIORITIZER — จัดลำดับด้วย RICE
+
+กฎ: ข้อมูลไม่พอให้ "ถามก่อน" ห้ามเดา
+จบแล้วสรุปเป็นตารางให้ PO เคาะ</pre>
+      </div>
+    </section>
+
+    <section class="grp" id="ws">
+      <h2><span class="gnum">07</span> Workshop · CPMatch Care</h2>
+      <div class="prompt">
+        <div class="head"><span class="tag">① kickoff · context</span><h3>prompt ตั้งโปรเจกต์ตัวเต็ม</h3><button class="copy">คัดลอก</button></div>
+        <pre>ต้องการสร้างโปรเจกต์ใหม่ "CPMatch Care" — แอพสำหรับพนักงานใช้ในองค์กร นี่คือรายละเอียด:
+
+ฟีเจอร์ (ภาพรวม):
+- ข้อมูลพนักงานทั้งหมดในองค์กร
+- ฟังก์ชันขาด / ลา / มาสาย
+- จัดการคนเข้า project ทำได้โดย admin
+- user level หลายระดับ แต่ละระดับมีสิทธิ์ไม่เท่ากัน ตั้งได้อิสระ
+- ระบบให้แต้มเมื่อทำกิจกรรมที่ระบุไว้สำเร็จ
+- กล่องระบายความรู้สึกแบบไม่ระบุตัวตน + ใช้ AI สรุปให้หัวหน้าอ่าน
+- หน้า admin จัดการระบบ (อยู่ในส่วน code ของ web)
+
+นี่เป็นภาพรวมคร่าว ๆ จะลงรายละเอียดตอนทำ feature อีกครั้ง
+ยังไม่ต้อง implement — ให้แพลนให้เสร็จและทำทีละ feature
+
+โครงสร้างไฟล์ context:
+- Layer 1: boilerplate สำหรับ agent หลายยี่ห้อ (agent.md, claude.md, gemini.md) ระบุด้วยว่า "ห้าม commit git ถ้าไม่มีการสั่ง"
+- Layer 2: context.md = architecture ทั้งหมดของระบบ
+- Layer 3: plan ทุก feature ต้องระบุสถานะ implement: todo / implement / ready to test / done เสมอ
+
+รายละเอียดเชิงเทคนิค:
+- มีทั้ง website และ mobile app
+- Web: Next.js + Prisma + Tailwind (แนะนำการวาง structure ด้วย)
+- App: Flutter เป็นหลัก (แนะนำ stack อื่น + structure ด้วย)
+- API: Go + GORM, raw query ให้น้อยที่สุด, วาง folder แบบ Uncle Bob clean architecture
+- DB: Postgres + สร้าง docker ให้ด้วย
+- ทุก service ก่อนจบ plan ต้องสรุป tech stack + architecture design ให้ครบก่อนเริ่มลงมือ
+- unit test ที่ API + UI test ผ่าน Playwright, coverage > 80%
+
+โครงสร้างไฟล์ระบบ:
+- root เก็บ context.md และ claude.md ทั้งหมด
+- แต่ละ service แยก git submodule: /api /web /app ภายใต้ root เดียวกัน
+- /plans เก็บ plan แต่ละ feature เป็น 001-planname.md, feature ใหม่เพิ่ม plan ในนี้เสมอ และทุก plan ref ไปที่ context.md หลัก
+
+skills ที่ต้องการ (ช่วยตรวจสอบ + install ก่อนเริ่ม):
+- /gstack — https://github.com/garrytan/gstack
+- /ux-ui-pro-max — https://ui-ux-pro-max-skill.nextlevelbuilder.io
+- /impeccable — https://impeccable.style
+
+ช่วยสร้าง role.md ระบุ persona หลายตำแหน่งไว้เป็นทีมที่ปรึกษาสำหรับ feature ใหม่
+ขั้นต้นทีมเล็ก: uxui 1 · dev lead 1 · po 2 · พนักงาน (end-user) 1
+เมื่อขึ้น plan feature ใหม่ ให้ถามทุกครั้งว่าจะใช้ทีมนี้หรือไม่
+
+จบขั้นตอนนี้ ช่วยเขียน context.md สรุปให้ก่อน หากมีอะไรให้ถามเพิ่มเติม
+สร้าง context ให้เสร็จก่อนค่อยสร้าง plan ต่อ</pre>
+      </div>
+      <div class="prompt">
+        <div class="head"><span class="tag">② +โทนสี (prompt2)</span><h3>เพิ่มอ้างอิงโทนสีลง context</h3><button class="copy">คัดลอก</button></div>
+        <pre>@design/CPMatch Care - Standalone.html
+ให้อ้างอิงโทนสีในแอพและเว็บจากไฟล์นี้ด้วย เพิ่มลง context</pre>
+      </div>
+      <div class="prompt">
+        <div class="head"><span class="tag">③ แนะนำลำดับ plan (prompt3)</span><h3>ให้ AI วางลำดับ plan ทั้ง project</h3><button class="copy">คัดลอก</button></div>
+        <pre>ช่วยแนะนำ plan ที่ควรเริ่มทำทีละขั้นทั้งหมดในการ init project ที</pre>
+      </div>
+      <div class="prompt">
+        <div class="head"><span class="tag">④ สร้าง stub + demo (prompt4)</span><h3>สร้าง plan stub แล้วลงมือถึง demo</h3><button class="copy">คัดลอก</button></div>
+        <pre>สร้างไฟล์ plan stub ทั้ง 16 ตัว ลง /plans
+
+ให้เริ่มทำจนสามารถรัน demo เพื่อให้เห็นภาพรวมของ project เลย</pre>
+      </div>
+    </section>
+
+    <footer>vibe coding workshop · CPMatch — <a href="vibe-coding-skills.html">กลับไปสไลด์</a></footer>
+  </div>
+</div>
+
+<!-- ============ TAB 2: file browser ============ -->
+<div class="panel" id="tab-files">
+  <aside>
+    <div class="hd">resources/</div>
+    <div id="filelist"></div>
+  </aside>
+  <div class="viewer">
+    <div class="vbar">
+      <span class="path"><span class="dir">resources/</span><span id="curname">—</span></span>
+      <button class="copy" id="copyBtn" disabled>คัดลอก</button>
+    </div>
+    <div class="view" id="view"><div class="empty-msg">เลือกไฟล์ทางซ้ายเพื่อดูเนื้อหา</div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">คัดลอกแล้ว</div>
+
+<script>
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+  toast.textContent = msg; toast.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>toast.classList.remove('show'), 1400);
+}
+
+// ----- tabs -----
+function showTab(name){
+  document.getElementById('tab-prompts').classList.toggle('on', name==='prompts');
+  document.getElementById('tab-files').classList.toggle('on', name==='files');
+  document.getElementById('tb-prompts').classList.toggle('on', name==='prompts');
+  document.getElementById('tb-files').classList.toggle('on', name==='files');
+  if(name==='files' && !filesInit){ initFiles(); filesInit = true; }
+}
+
+// ----- curated prompt copy -----
+document.querySelectorAll('#tab-prompts .prompt').forEach(p=>{
+  const btn = p.querySelector('.copy'), pre = p.querySelector('pre');
+  btn.addEventListener('click', async ()=>{
+    const text = pre.innerText.trim();
+    try{ await navigator.clipboard.writeText(text); }
+    catch(e){ const r=document.createRange(); r.selectNodeContents(pre);
+      const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+      try{document.execCommand('copy');}catch(_){} s.removeAllRanges(); }
+    btn.textContent='คัดลอกแล้ว ✓'; btn.classList.add('done');
+    showToast('คัดลอก prompt แล้ว');
+    setTimeout(()=>{ btn.textContent='คัดลอก'; btn.classList.remove('done'); }, 1400);
+  });
+});
+
+// ----- file browser -----
+const FILES = ['prompt1.txt', 'prompt2.txt', 'prompt3.txt', 'prompt4.txt']; // เพิ่มไฟล์ใหม่ที่นี่
+const DIR = 'resources/';
+let filesInit = false, currentText = '';
+const listEl = document.getElementById('filelist');
+const viewEl = document.getElementById('view');
+const nameEl = document.getElementById('curname');
+const copyBtn = document.getElementById('copyBtn');
+const rows = {};
+
+function fileIcon(){
+  return '<svg class="ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
+}
+function fmtSize(n){ return n < 1024 ? n + ' B' : (n/1024).toFixed(1) + ' KB'; }
+async function fetchText(f){
+  const res = await fetch(DIR + encodeURIComponent(f), {cache:'no-store'});
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return await res.text();
+}
+async function openFile(f){
+  Object.values(rows).forEach(r=>r.classList.remove('active'));
+  rows[f].classList.add('active');
+  nameEl.textContent = f;
+  viewEl.innerHTML = '<div class="empty-msg">กำลังโหลด…</div>';
+  copyBtn.disabled = true; currentText = '';
+  try{
+    const text = await fetchText(f);
+    rows[f].querySelector('.sz').textContent = fmtSize(new Blob([text]).size);
+    if(text.trim() === ''){ rows[f].classList.add('empty'); viewEl.innerHTML = '<div class="empty-msg">(ไฟล์ว่าง)</div>'; return; }
+    currentText = text;
+    const pre = document.createElement('pre'); pre.textContent = text;
+    viewEl.innerHTML = ''; viewEl.appendChild(pre);
+    copyBtn.disabled = false;
+  }catch(err){
+    viewEl.innerHTML = '<div class="err-msg">เปิดไฟล์ไม่ได้: ' + err.message +
+      '<br><br>ถ้าเปิดแบบ file:// เบราว์เซอร์อาจบล็อกการอ่านไฟล์ — เปิดผ่าน GitHub Pages / web server แทน</div>';
+  }
+}
+copyBtn.addEventListener('click', async ()=>{
+  if(!currentText) return;
+  try{ await navigator.clipboard.writeText(currentText); }
+  catch(e){ const pre = viewEl.querySelector('pre');
+    if(pre){ const r=document.createRange(); r.selectNodeContents(pre);
+      const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+      try{document.execCommand('copy');}catch(_){} s.removeAllRanges(); } }
+  copyBtn.textContent='คัดลอกแล้ว ✓'; copyBtn.classList.add('done');
+  showToast('คัดลอกเนื้อหาไฟล์แล้ว');
+  setTimeout(()=>{ copyBtn.textContent='คัดลอก'; copyBtn.classList.remove('done'); }, 1400);
+});
+async function initFiles(){
+  FILES.forEach(f=>{
+    const row = document.createElement('div');
+    row.className='file';
+    row.innerHTML = fileIcon() + '<span class="nm">'+f+'</span><span class="sz"></span>';
+    row.addEventListener('click', ()=>openFile(f));
+    listEl.appendChild(row); rows[f]=row;
+  });
+  for(const f of FILES){
+    try{ const t = await fetchText(f);
+      rows[f].querySelector('.sz').textContent = fmtSize(new Blob([t]).size);
+      if(t.trim()==='') rows[f].classList.add('empty'); }catch(e){}
+  }
+  if(FILES.length) openFile(FILES[0]);
+}
+</script>
+</body>
+</html>

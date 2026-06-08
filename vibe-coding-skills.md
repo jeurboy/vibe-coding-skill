@@ -1252,6 +1252,141 @@ auth/role ของ HR · PDPA/ข้อมูลเงินเดือน · 
 
 ---
 
+<!-- _class: divider -->
+
+<span class="secnum">08</span>
+
+SECTION · ลงมือทำ
+
+# Workshop — สร้างของจริง
+
+โปรเจกต์จริง: **CPMatch Care** — แอพดูแลพนักงานในองค์กร · วาง context + plan ทีละ feature ด้วย 4 ทักษะ
+
+---
+
+<span class="mono">// WORKSHOP · BRD ย่อ</span>
+
+## โจทย์จริง: CPMatch Care — แอพดูแลพนักงาน
+
+*แอพภายในองค์กร · ผู้ใช้: พนักงาน / หัวหน้า / admin · workshop นี้วาง context + plan ทีละ feature (ยังไม่ลงโค้ด)*
+
+<div class="cols">
+<div class="card brand">
+
+### Core HR
+- ทะเบียนพนักงานทั้งองค์กร
+- ขาด · ลา · มาสาย
+- จัดคนเข้า project (admin)
+
+</div>
+<div class="card">
+
+### Engagement + Wellbeing
+- ระบบแต้มเมื่อทำกิจกรรมสำเร็จ
+- กล่องระบายความรู้สึก **ไม่ระบุตัวตน**
+- AI สรุปให้หัวหน้าอ่าน
+
+</div>
+<div class="card green">
+
+### Platform
+- RBAC หลายระดับ · ตั้งสิทธิ์อิสระ
+- หน้า admin จัดการระบบ
+- Web + Mobile + API แยก service
+
+</div>
+</div>
+
+`Web · Next.js + Prisma + Tailwind` · `App · Flutter` · `API · Go + GORM (clean arch)` · `DB · Postgres + Docker`
+
+> **กติกา:** plan ก่อนทุก feature · สรุป tech stack + architecture ก่อนลงมือ · test coverage > 80% (API unit + Playwright) · โทนสีตาม design CPMatch Care
+
+---
+
+<span class="mono">// WORKSHOP · เตรียมเครื่อง (5 นาที)</span>
+
+## ก่อนเริ่ม: เช็กให้พร้อม
+
+*ทำให้ครบก่อน แล้วทั้ง session จะลื่น ไม่ติดเรื่อง setup กลางทาง*
+
+<div class="cols">
+
+- **1** Claude Code เปิดได้ + login แล้ว
+- **2** git — repo หลัก + submodule `/api` `/web` `/app`
+- **3** โฟลเดอร์ `/plans` สำหรับ plan ทุก feature
+
+- **4** skills: `/gstack` · `/ux-ui-pro-max` · `/impeccable` — ตรวจ + install ก่อนเริ่ม
+- **5** editor เปิด root ไว้ (เห็น context.md / claude.md)
+- **6** ไฟล์ design โทนสี CPMatch Care ไว้อ้างอิง
+
+</div>
+
+> โครงสร้าง: root เก็บ `context.md` + `claude.md` · service แยก submodule `/api` `/web` `/app` · plan เป็น `/plans/001-<feature>.md` (ref context.md เสมอ)
+
+---
+
+<span class="mono">// WORKSHOP · pipeline — วันนี้หยุดที่ Plan</span>
+
+## ตั้งระบบให้ดี ก่อนลงโค้ด
+
+`1 Context (Layer 1-3) → 2 Roles (role.md) → 3 Plan/feature [หยุดที่นี่] → 4 Implement → 5 Review+QA (cov>80%) → 6 Ship`
+
+- **1 Context** — ให้ AI ร่าง `context.md` (architecture) + `claude.md`/`agent.md` (Layer 1, ห้าม commit เอง) ตามโครง Layer 1-3
+- **2 Roles** — `role.md` ทีมที่ปรึกษา: uxui 1 · dev lead 1 · po 2 · end-user 1 — เรียกใช้ตอนคิด feature ใหม่
+- **3 Plan/feature** — เลือก feature → สรุป tech stack + architecture → `/plans/001-*.md` (สถานะ todo→done) *ก่อน*ลงโค้ด
+
+> prompt บอกชัด: “ยังไม่ต้อง implement ให้แพลนให้เสร็จและทำทีละ feature” — workshop วันนี้จบที่ **plan ที่ review ได้**
+
+---
+
+<span class="mono">// WORKSHOP · prompt พร้อมใช้ — ก๊อปแล้วปรับ</span>
+
+## prompt ประจำแต่ละก้าว
+
+**① Context — kickoff (ตัวเต็มในคลัง Resources)**
+“สร้างโปรเจกต์ใหม่ **CPMatch Care**: แอพพนักงานในองค์กร (Web Next.js · App Flutter · API Go · DB Postgres) — ภาพรวมฟีเจอร์ + โครง context Layer 1-3 + skills ที่ต้องมี · **ยังไม่ต้อง implement** เขียน `context.md` ให้เสร็จก่อน ไม่ชัดให้ถาม ห้ามเดา” → prompt เต็มในคลัง Resources
+
+**② Roles — ทีมที่ปรึกษา**
+“สร้าง `role.md` จำลอง persona: uxui 1 · dev lead 1 · po 2 · end-user 1 — ทุกครั้งที่ขึ้น plan feature ใหม่ ให้ถามก่อนว่าจะเรียกทีมนี้ปรึกษาไหม”
+
+**③ Plan/feature — สรุป stack + arch ก่อน**
+“เลือก feature ‘ขาด/ลา/มาสาย’: สรุป tech stack + architecture design ของแต่ละ service ให้ครบก่อน แล้วเขียน `/plans/001-*.md` (ref context.md · มีสถานะ todo→done) — ยังไม่ลงโค้ด”
+
+**④ Implement → ปิดงาน (ทำต่อทีละ feature)**
+“ลงมือตาม plan ทีละก้าว หยุดให้ review ก่อนไปต่อ · test cov > 80% (API unit + Playwright)” · จบ feature: `/review` → `/qa` → `/ship`
+
+---
+
+<span class="mono">// WORKSHOP · เกณฑ์เสร็จ</span>
+
+## “เสร็จ” ของ workshop วันนี้
+
+<div class="cols">
+<div class="card green">
+
+### Definition of Done
+- ✓ `context.md` (Layer 2) + `claude.md`/`agent.md` (Layer 1) ครบ
+- ✓ `role.md` ทีมที่ปรึกษาพร้อมใช้
+- ✓ ≥ 1 plan ใน `/plans/001-*.md` (มีสถานะ · ref context)
+- ✓ สรุป tech stack + architecture ครบทุก service
+- ✓ ระบุกฎ test (cov > 80%) ใน context แล้ว
+
+</div>
+<div class="card amber">
+
+### กับดักที่เจอบ่อย
+- ▲ รีบ implement ก่อนวาง context → กลับมาแก้ยับ
+- ▲ สั่ง mega-prompt ทีเดียว → ทำทีละ feature
+- ▲ ปล่อย AI commit เอง → กฎ Layer 1: ห้าม commit ถ้าไม่สั่ง
+- ▲ plan ไม่มีสถานะ → ใส่ todo→done ทุก feature
+
+</div>
+</div>
+
+> มี context + plan ที่ review แล้ว → ลง implement ทีละ feature ด้วย pipeline เดิม (Implement → Review → /qa → /ship) ได้เลย
+
+---
+
 <span class="mono">// RECAP · สรุป + กับดักที่เลี่ยง</span>
 
 ## เปลี่ยน vibe → ใช้งานจริง

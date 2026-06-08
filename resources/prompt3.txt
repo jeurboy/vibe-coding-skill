@@ -1,0 +1,45 @@
+ช่วยแนะนำ plan ที่ควรเริ่มทำทีละขั้นทั้งหมดในการ init project ที
+
+--- response ---
+นี่คือลำดับ plan ที่ผมแนะนำสำหรับ init จนพร้อมลงฟีเจอร์จริง — เรียงตาม dependency (ของที่ทุกอย่างต้องพึ่งทำก่อน) แบ่งเป็น phase ครับ ทุกตัวเริ่มสถานะ todo และ ref context.md
+
+Phase 0 — Foundation / Scaffolding (ต้องทำก่อนทุกอย่าง)
+#	Plan	ครอบคลุม	Ref context
+001	infra-local-dev	docker-compose.yml (postgres), env/config convention, ตั้ง git submodule api/web/app, CI skeleton	§5, §6.4, §12.5
+002	api-skeleton	โครง Go Clean Arch (cmd/internal/...), GORM connection, golang-migrate, health endpoint, middleware base (recovery/log/cors), test harness (testify)	§6.1, §9
+003	web-skeleton	Next.js App Router + Tailwind + design tokens §12, Prisma introspection setup, API client base, Playwright harness, root layout	§6.2, §12
+004	app-skeleton	Flutter feature-first scaffold, ThemeData จาก §12 (Kanit + brand), dio/retrofit + go_router + Riverpod + get_it, test harness	§6.3, §12
+005	ui-foundation	component primitives ใช้ brand tokens (button/input/card/badge) ทั้ง web+app, ให้โทนตรงกัน	§12
+Phase 1 — Identity & Access (แกนกลาง ฟีเจอร์อื่นพึ่งทั้งหมด)
+#	Plan	ครอบคลุม	Ref
+006	auth-email-password	สมัคร/ล็อกอิน email+password (argon2id), JWT access+refresh rotation, auth layer แบบ pluggable (เผื่อ SSO), middleware ตรวจ token	§2, §8.3
+007	rbac-configurable (F4)	roles/permissions/role_permissions/user_roles, ตรวจสิทธิ์ที่ API middleware, ตั้งสิทธิ์อิสระ	§8.1
+Phase 2 — Org Core + Admin
+#	Plan	ครอบคลุม	Ref
+008	employee-directory (F1)	employee_profiles/departments/positions, list/search/detail (web+app)	§7
+009	admin-console-foundation (F7)	shell admin (RBAC-gated) + จัดการ user/role/permission + ตั้งค่าระบบ	§6.2, §8.1
+Phase 3 — HR Features
+#	Plan	ครอบคลุม	Ref
+010	project-membership (F3)	projects/project_members, admin จัดคนเข้า/ออก project	§7
+011	attendance-leave (F2)	check-in, ขอลา/อนุมัติ, ขาด-ลา-มาสาย, รายงาน	§7
+Phase 4 — Engagement
+#	Plan	ครอบคลุม	Ref
+012	points-gamification (F5)	activities/activity_completions/points_ledger, ให้แต้มเมื่อทำกิจกรรมสำเร็จ	§7
+013	ai-provider-config	AI provider interface ฝั่ง API + หน้า admin เลือก provider/model/key (Gemini 2.5 default)	§2, §6.1
+014	anonymous-feedback-ai (F6)	ที่ระบายความรู้สึกไม่ระบุตัวตน + k-anonymity + AI สรุปให้หัวหน้า (ใช้ 013)	§8.2
+Phase 5 — Hardening / Ship
+#	Plan	ครอบคลุม	Ref
+015	notifications	in-app / push (FCM) / email (เลือกตอนทำ)	§12 open Q
+016	deploy-cloud	container build + deploy cloud-agnostic, managed Postgres, coverage gate >80%	§2, §9
+หมายเหตุสำคัญ:
+
+013 ต้องมาก่อน 014 เพราะ F6 (สรุปด้วย AI) พึ่ง AI provider layer
+006+007 เป็นคอขวด — ฟีเจอร์ Phase 2+ ทั้งหมดต้องมี auth+RBAC ก่อน
+005 (ui-foundation) จะทำให้ feature หลัง ๆ เร็วขึ้นเพราะมี component สำเร็จ
+ถ้าอยากเห็นผลเร็ว (demo ได้) ลำดับขั้นต่ำคือ 001→002→003→006→008
+
+อยากให้ผมทำต่อแบบไหนครับ?
+
+สร้างไฟล์ plan stub ทั้ง 16 ตัว ลง /plans (กรอก header + ref + status todo จาก template ไว้รอ) แล้วอัปเดต index ใน plans/README.md
+เริ่มลงรายละเอียด plan ตัวแรก (001) เต็ม ๆ เลย — ซึ่งผมจะถามก่อนว่าจะ convene persona panel (role.md) ไหม ตามกฎ
+ปรับลำดับ/ขอบเขตก่อน

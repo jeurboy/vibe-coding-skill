@@ -1,0 +1,46 @@
+ต้องการสร้าง โปรเจกต์ใหม่ นี่คือรายละเอียด
+
+แอพสำหรับพนักงานใช้ในองค์กรมีรายละเอียดดังนี้
+
+มีรายละเอียดพนักงานทั้งหมดในองค์กร
+มีฟังก์ชั่นขาดลามาสาย
+มีฟังชั่นจัดการคนเข้า project โดยทำได้โดย admin
+มี user level เข้าระบบหลายระดับ แต่ละระดับ มีฟังก์ชั่นการทำงานไม่เท่ากัน สามารถตั้งได้อิสระ
+มีระบบให้แต้มเมื่อทำกิจกรรมที่ระบุไว้สำเร็จ 
+มีที่ระบายความรู้สึก และ สรุปให้หัวหน้าอ่านโดยไม่ระบุตัวตน และ ใช้ ai สำหรับ สรุป
+มีหน้า admin สำหรับจัดการระบบ  โดย ไว้ในส่วน code ของ web
+
+นี่เป็นเพียงภาพรวมคร่าวๆและจะลงรายละเอียดตอนลง feature อีกครัั้ง
+ยังไม่ต้อง implement ให้แพลนให้เสร็จและทำทีละ feature
+
+โครงสร้างไฟล์ context
+Layer 1 คือ boilerplate สำหรับ agent หลาย ยี่ห้อ เช่น agent.md , claude,md, gemini.md ระบุด้วยว่าห้าม commit git ถ้าไม่มีการสั่ง
+Layer 2 เก็บไฟล์context.md ซึ่งเป็น architecture ทั้งหมดของระบบ
+Layer 3 เก็บไฟล์ plan ทั้งหมด ในทุก feature ต้องระบุสถานะการ implement เป็น todo, implement, ready to test, done เสมอ
+
+รายละเอียด เชิง technic
+
+ระบบมีทั้ง website และ mobile app
+Website ใช้ nextjs มี orm เป็น prisma และใช้ css เป็น tailwind แนะนำการวาง structure ด้วย
+App ใช้ flutter เป็นหลักและช่วยแนะนำ stack อื่นด้วย แนะนำการวาง structure ด้วย
+Api ใช้ golang และ ใช้ gorm เป็น orm และ ใช้ raw query ให้น้อยที่สุด ใช้ การวาง folder แบบ uncle bob clean architecture
+Db ใช้ postgres ช่วยสร้าง docker ให้ด้วย
+
+ทุก service ก่อนจบการ  plan ต้อง สรุป tech stack และ architect design ให้ครบก่อนเริ่มลงมือทำ
+
+มีการทำ unit test ที่ api และ ui test ผ่าน playwright โดย ให้ coverage มากกว่า 80%
+
+โครงสร้าง file ระบบ แยกดังนี้
+
+Root path เก็บไฟล์ context.md และ claude.md ทั้งหมด 
+แต่ละ service แยก git ตาม submodule แยกตาม service /api, /web, /app ภายใต้ root เดียวกัน
+/plans สำหรับ เก็บ plan ในแต่ละ feature เป็น format 001-plannamexxxxx.md หากมี feature ใหม่ให้เพิ่ม plan ในนี้เสมอ และในทุก plan ให้ ref ไปที่ context.md หลักด้วย
+
+ให้ระบุ skill ว่ามีอะไรบ้างในนี้เลย skill ที่ต้องการ และช่วยตรวจสอบ และ install ก่อนเริ่ม project
+/gstack- https://github.com/garrytan/gstack
+/ux-ui-pro-max  - https://ui-ux-pro-max-skill.nextlevelbuilder.io
+/impeccable - https://impeccable.style
+
+ช่วยสร้าง role.md สำหรับเพื่แระบุการจำลอง persona ในหลายๆ ตำแหน่งเพื่อใช้รวมตัวปรึกษาสำหรับ feature ใหม่ๆ โดยขั้นต้น ให้สร้างทีมเล็กๆ มี uxui 1 คน devl led 1 คน และ po 2 คน และ พนักงาน ที่เป็น end user 1 คนปละเมื่อมีการขึ้น plan feature ใหม่ฝห้ถามทุกครั้งว่าจะใช้งานคนกลุ่มนี้หรือไม่
+
+จบขั้นตอนนนี้ช่วยเขียน context.md สรุปให้หน่อย หากมีอะไรให้ถามเพิ่มเติม ให้สร้าง context ให้เสร็จก่อนค่อยสร้าง plan ต่อนะ
