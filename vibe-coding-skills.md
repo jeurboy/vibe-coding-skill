@@ -1323,6 +1323,8 @@ SECTION · ลงมือทำ
 
 > โครงสร้าง: root เก็บ `context.md` + `claude.md` · service แยก submodule `/api` `/web` `/app` · plan เป็น `/plans/001-<feature>.md` (ref context.md เสมอ)
 
+> **กฎ UI (hard rule ใน context):** ทุกการสร้าง/แก้ UI ทั้ง web + app ต้องผ่าน skill design `/ux-ui-pro-max` + `/impeccable` เสมอ — ห้ามออกแบบเอง
+
 ---
 
 <span class="mono">// WORKSHOP · pipeline — วันนี้หยุดที่ Plan</span>
